@@ -81,7 +81,6 @@ workdir="/usr/local"
 livecd="${workdir}/ghostbsd-build"
 base="${livecd}/base"
 iso="${livecd}/iso"
-uzip="${livecd}/uzip"
 packages_storage="${livecd}/packages"
 release="${livecd}/release"
 export release
@@ -95,7 +94,7 @@ label="GhostBSD"
 
 workspace()
 {
-  mkdir -p "${livecd}" "${base}" "${iso}" "${packages_storage}" "${uzip}" "${cd_root}" >/dev/null 2>/dev/null
+  mkdir -p "${livecd}" "${base}" "${iso}" "${packages_storage}" "${release}" "${cd_root}" >/dev/null 2>/dev/null
 }
 
 base()
@@ -230,7 +229,7 @@ developer()
   #   rm -rf ${cdroot} >/dev/null 2>/dev/null || true
   # fi
 
-  cd  "${uzip}"
+  cd  "${release}"
   rm -rf /root/.cache 2>/dev/null 2>&1 | true
   
   # Create a spec file that describes the whole filesystem
@@ -323,7 +322,7 @@ developer()
 uzip() 
 {
   install -o root -g wheel -m 755 -d "${cd_root}"
-  ( cd "${uzip}" ; makefs -b 75% -f 75% -R 262144 "${cd_root}/rootfs.ufs" ../spec.user )
+  ( cd "${release}" ; makefs -b 75% -f 75% -R 262144 "${cd_root}/rootfs.ufs" ../spec.user )
   ls -lh "${cd_root}/rootfs.ufs"
   mkdir -p "${cd_root}/boot/"
   mkuzip -o "${cd_root}/boot/rootfs.uzip" "${cd_root}/rootfs.ufs"
@@ -335,9 +334,9 @@ uzip()
 boot() 
 {
   mkdir -p "${cd_root}"/bin/
-  cp "${uzip}"/COPYRIGHT "${cd_root}"/
+  cp "${release}"/COPYRIGHT "${cd_root}"/
   cp -R "${cwd}/overlays/boot/" "${cd_root}"
-  cd "${uzip}" && tar -cf - boot | tar -xf - -C "${cd_root}"
+  cd "${release}" && tar -cf - boot | tar -xf - -C "${cd_root}"
   # Remove all modules from the ISO that is not required before the root filesystem is mounted
   # The whole directory /boot/modules is unnecessary
   rm -rf "${cd_root}"/boot/modules/*
@@ -356,8 +355,8 @@ boot()
   find "${cd_root}"/boot/kernel -type f -name '*.ko' -exec gzip -f {} \;
   find "${cd_root}"/boot/kernel -type f -name '*.ko' -delete
   mkdir -p "${cd_root}"/dev "${cd_root}"/etc # TODO: Create all the others here as well instead of keeping them in overlays/boot
-  cp "${uzip}"/etc/login.conf  "${cd_root}"/etc/ # Workaround for: init: login_getclass: unknown class 'daemon'
-  cd "${uzip}" && tar -cf - rescue | tar -xf - -C "${cd_root}" # /rescue is full of hardlinks
+  cp "${release}"/etc/login.conf  "${cd_root}"/etc/ # Workaround for: init: login_getclass: unknown class 'daemon'
+  cd "${release}" && tar -cf - rescue | tar -xf - -C "${cd_root}" # /rescue is full of hardlinks
   # Must not try to load tmpfs module in FreeBSD 13 and later, 
   # because it will prevent the one in the kernel from working
   sed -i '' -e 's|^tmpfs_load|# load_tmpfs_load|g' "${cd_root}"/boot/loader.conf
