@@ -43,8 +43,7 @@ task:
     
   Build_script:
     - export VER=$(uname -r | cut -d "-" -f 1)
-    - /bin/sh -x ./build.sh -d "$DESKTOP"
-    # /bin/sh -c '[ "$DESKTOP" = "test" ] && sudo sh build.sh -t || /bin/sh -x ./build.sh -d "$DESKTOP"'
+    - /bin/sh -x ./build.sh -d "$DESKTOP" -b "unstable" # Gershwin is not in FreeBSD release yet
     - df -h
     - ls -lh /usr/local/ghostbsd-build/iso/*.iso || false # Error out if ISO was not produced to mitigate the above
     # ( cd /usr/local/ghostbsd-build/ ; zsyncmake *.iso )
