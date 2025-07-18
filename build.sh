@@ -255,58 +255,54 @@ desktop_config()
   sh "${cwd}/desktop_config/${desktop}.sh"
 }
 
-uzip()
+uzip() 
 {
-  install -o root -g wheel -m 755 -d "${cd_root}"
-  mkdir "${cd_root}/data"
-  zfs snapshot ghostbsd@clean
-  zfs send -p -c -e ghostbsd@clean | dd of=/usr/local/ghostbsd-build/cd_root/data/system.img status=progress bs=1M
-}
+  install -o root -g wheel -m 755 -d "${cdroot}"
+  ( cd "${uzip}" ; makefs -b 75% -f 75% -R 262144 "${cdroot}/rootfs.ufs" ../spec.user )
+  mkdir -p "${cdroot}/boot/"
+  if [ $MAJOR -gt 13 ] ; then
+    mkuzip -o "${cdroot}/boot/rootfs.uzip" "${cdroot}/rootfs.ufs"
+  else
+    # Use zstd when possible, which is available in FreeBSD beginning with 13 but broken in 14 (FreeBSD bug 267082)
+    mkuzip -A zstd -C 15 -d -s 262144 -o "${cdroot}/boot/rootfs.uzip" "${cdroot}/rootfs.ufs"
+  fi
 
-ramdisk()
-{
-  ramdisk_root="${cd_root}/data/ramdisk"
-  mkdir -p "${ramdisk_root}"
-  cd "${release}"
-  tar -cf - rescue | tar -xf - -C "${ramdisk_root}"
-  cd "${cwd}"
-  install -o root -g wheel -m 755 "init.sh.in" "${ramdisk_root}/init.sh"
-  sed "s/@VOLUME@/GHOSTBSD/" "init.sh.in" > "${ramdisk_root}/init.sh"
-  mkdir "${ramdisk_root}/dev"
-  mkdir "${ramdisk_root}/etc"
-  touch "${ramdisk_root}/etc/fstab"
-  install -o root -g wheel -m 755 "rc.in" "${ramdisk_root}/etc/rc"
-  cp ${release}/etc/login.conf ${ramdisk_root}/etc/login.conf
-  makefs -b '10%' "${cd_root}/data/ramdisk.ufs" "${ramdisk_root}"
-  gzip "${cd_root}/data/ramdisk.ufs"
-  rm -rf "${ramdisk_root}"
-}
-
-boot()
-{
-  cd "${release}"
-  tar -cf - boot | tar -xf - -C "${cd_root}"
-  cp COPYRIGHT ${cd_root}/COPYRIGHT
-  cd "${cwd}"
-  cp LICENSE ${cd_root}/LICENSE
-  cp -R boot/ ${cd_root}/boot/
-  mkdir ${cd_root}/etc
-
-  # Try to unmount dev and release if mounted
-  umount ${release}/dev >/dev/null 2>/dev/null || true
-  umount ${release} >/dev/null 2>/dev/null || true
+  rm -f "${cdroot}/rootfs.ufs"
   
-  # Export ZFS pool and ensure it's clean
-  zpool export ghostbsd
-  timeout=10
-  while zpool status ghostbsd >/dev/null 2>&1; do
-    sleep 1
-    timeout=$((timeout - 1))
-    if [ $timeout -eq 0 ]; then
-      echo "Failed to cleanly export ZFS pool within timeout"
-      break
-    fi
-  done
+}
+
+boot() 
+{
+  mkdir -p "${cdroot}"/bin/ ; cp "${uzip}"/bin/freebsd-version "${cdroot}"/bin/
+  cp "${uzip}"/COPYRIGHT "${cdroot}"/
+  cp -R "${cwd}/overlays/boot/" "${cdroot}"
+  cd "${uzip}" && tar -cf - boot | tar -xf - -C "${cdroot}"
+  # Remove all modules from the ISO that is not required before the root filesystem is mounted
+  # The whole directory /boot/modules is unnecessary
+  rm -rf "${cdroot}"/boot/modules/*
+  # Remove modules in /boot/kernel that are not loaded at boot time
+  find "${cdroot}"/boot/kernel -name '*.ko' \
+    -not -name 'cryptodev.ko' \
+    -not -name 'firewire.ko' \
+    -not -name 'geom_uzip.ko' \
+    -not -name 'tmpfs.ko' \
+    -not -name 'xz.ko' \
+    -delete
+  # Compress the kernel
+  gzip -f "${cdroot}"/boot/kernel/kernel || true
+  rm "${cdroot}"/boot/kernel/kernel || true
+  # Compress the modules in a way the kernel understands
+  find "${cdroot}"/boot/kernel -type f -name '*.ko' -exec gzip -f {} \;
+  find "${cdroot}"/boot/kernel -type f -name '*.ko' -delete
+  mkdir -p "${cdroot}"/dev "${cdroot}"/etc # TODO: Create all the others here as well instead of keeping them in overlays/boot
+  cp "${uzip}"/etc/login.conf  "${cdroot}"/etc/ # Workaround for: init: login_getclass: unknown class 'daemon'
+  cd "${uzip}" && tar -cf - rescue | tar -xf - -C "${cdroot}" # /rescue is full of hardlinks
+  if [ $MAJOR -gt 12 ] ; then
+    # Must not try to load tmpfs module in FreeBSD 13 and later, 
+    # because it will prevent the one in the kernel from working
+    sed -i '' -e 's|^tmpfs_load|# load_tmpfs_load|g' "${cdroot}"/boot/loader.conf
+    rm "${cdroot}"/boot/kernel/tmpfs.ko*
+  fi
 }
 
 image()
