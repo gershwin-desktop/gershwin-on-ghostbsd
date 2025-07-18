@@ -44,7 +44,7 @@ task:
   Build_script:
     - export VER=$(uname -r | cut -d "-" -f 1)
     - export BUILDNUMBER=0
-    - /bin/sh -x ./build.sh "${DESKTOP}" || true # FIXME: Why does this return an error even though the ISO succeeded?
+    - [ "$DESKTOP" = "test" ] && /bin/sh -x build.sh -t || /bin/sh -x ./build.sh -d "${DESKTOP}"
     - df -h
     - ls -lh /usr/local/ghostbsd-build/iso/*.iso || false # Error out if ISO was not produced to mitigate the above
     # ( cd /usr/local/ghostbsd-build/ ; zsyncmake *.iso )
