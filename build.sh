@@ -257,31 +257,31 @@ desktop_config()
 
 uzip() 
 {
-  install -o root -g wheel -m 755 -d "${cdroot}"
-  ( cd "${uzip}" ; makefs -b 75% -f 75% -R 262144 "${cdroot}/rootfs.ufs" ../spec.user )
-  mkdir -p "${cdroot}/boot/"
+  install -o root -g wheel -m 755 -d "${cd_root}"
+  ( cd "${uzip}" ; makefs -b 75% -f 75% -R 262144 "${cd_root}/rootfs.ufs" ../spec.user )
+  mkdir -p "${cd_root}/boot/"
   if [ $MAJOR -gt 13 ] ; then
-    mkuzip -o "${cdroot}/boot/rootfs.uzip" "${cdroot}/rootfs.ufs"
+    mkuzip -o "${cd_root}/boot/rootfs.uzip" "${cd_root}/rootfs.ufs"
   else
     # Use zstd when possible, which is available in FreeBSD beginning with 13 but broken in 14 (FreeBSD bug 267082)
-    mkuzip -A zstd -C 15 -d -s 262144 -o "${cdroot}/boot/rootfs.uzip" "${cdroot}/rootfs.ufs"
+    mkuzip -A zstd -C 15 -d -s 262144 -o "${cd_root}/boot/rootfs.uzip" "${cd_root}/rootfs.ufs"
   fi
 
-  rm -f "${cdroot}/rootfs.ufs"
+  rm -f "${cd_root}/rootfs.ufs"
   
 }
 
 boot() 
 {
-  mkdir -p "${cdroot}"/bin/ ; cp "${uzip}"/bin/freebsd-version "${cdroot}"/bin/
-  cp "${uzip}"/COPYRIGHT "${cdroot}"/
-  cp -R "${cwd}/overlays/boot/" "${cdroot}"
-  cd "${uzip}" && tar -cf - boot | tar -xf - -C "${cdroot}"
+  mkdir -p "${cd_root}"/bin/ ; cp "${uzip}"/bin/freebsd-version "${cd_root}"/bin/
+  cp "${uzip}"/COPYRIGHT "${cd_root}"/
+  cp -R "${cwd}/overlays/boot/" "${cd_root}"
+  cd "${uzip}" && tar -cf - boot | tar -xf - -C "${cd_root}"
   # Remove all modules from the ISO that is not required before the root filesystem is mounted
   # The whole directory /boot/modules is unnecessary
-  rm -rf "${cdroot}"/boot/modules/*
+  rm -rf "${cd_root}"/boot/modules/*
   # Remove modules in /boot/kernel that are not loaded at boot time
-  find "${cdroot}"/boot/kernel -name '*.ko' \
+  find "${cd_root}"/boot/kernel -name '*.ko' \
     -not -name 'cryptodev.ko' \
     -not -name 'firewire.ko' \
     -not -name 'geom_uzip.ko' \
@@ -289,19 +289,19 @@ boot()
     -not -name 'xz.ko' \
     -delete
   # Compress the kernel
-  gzip -f "${cdroot}"/boot/kernel/kernel || true
-  rm "${cdroot}"/boot/kernel/kernel || true
+  gzip -f "${cd_root}"/boot/kernel/kernel || true
+  rm "${cd_root}"/boot/kernel/kernel || true
   # Compress the modules in a way the kernel understands
-  find "${cdroot}"/boot/kernel -type f -name '*.ko' -exec gzip -f {} \;
-  find "${cdroot}"/boot/kernel -type f -name '*.ko' -delete
-  mkdir -p "${cdroot}"/dev "${cdroot}"/etc # TODO: Create all the others here as well instead of keeping them in overlays/boot
-  cp "${uzip}"/etc/login.conf  "${cdroot}"/etc/ # Workaround for: init: login_getclass: unknown class 'daemon'
-  cd "${uzip}" && tar -cf - rescue | tar -xf - -C "${cdroot}" # /rescue is full of hardlinks
+  find "${cd_root}"/boot/kernel -type f -name '*.ko' -exec gzip -f {} \;
+  find "${cd_root}"/boot/kernel -type f -name '*.ko' -delete
+  mkdir -p "${cd_root}"/dev "${cd_root}"/etc # TODO: Create all the others here as well instead of keeping them in overlays/boot
+  cp "${uzip}"/etc/login.conf  "${cd_root}"/etc/ # Workaround for: init: login_getclass: unknown class 'daemon'
+  cd "${uzip}" && tar -cf - rescue | tar -xf - -C "${cd_root}" # /rescue is full of hardlinks
   if [ $MAJOR -gt 12 ] ; then
     # Must not try to load tmpfs module in FreeBSD 13 and later, 
     # because it will prevent the one in the kernel from working
-    sed -i '' -e 's|^tmpfs_load|# load_tmpfs_load|g' "${cdroot}"/boot/loader.conf
-    rm "${cdroot}"/boot/kernel/tmpfs.ko*
+    sed -i '' -e 's|^tmpfs_load|# load_tmpfs_load|g' "${cd_root}"/boot/loader.conf
+    rm "${cd_root}"/boot/kernel/tmpfs.ko*
   fi
 }
 
