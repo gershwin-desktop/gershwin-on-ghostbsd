@@ -352,7 +352,7 @@ developer()
 
   # Create the developer image
   makefs -o label="Developer" -R 262144 "${iso}/developer.ufs" "${livecd}"/spec.developer.sorted
-  developerimagename=$(basename $(echo ${isopath} | sed -e 's|.iso$|.developer.img|g'))
+  developerimagename=$(basename $(echo ${iso_path} | sed -e 's|.iso$|.developer.img|g'))
   if [ $MAJOR -gt 13 ] ; then
     mkuzip -o "${iso}/${developerimagename}" "${iso}/developer.ufs"
   else
