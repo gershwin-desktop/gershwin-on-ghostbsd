@@ -334,7 +334,7 @@ uzip()
 
 boot() 
 {
-  mkdir -p "${cd_root}"/bin/ ; cp "${uzip}"/bin/ghostbsd-version "${cd_root}"/bin/
+  mkdir -p "${cd_root}"/bin/
   cp "${uzip}"/COPYRIGHT "${cd_root}"/
   cp -R "${cwd}/overlays/boot/" "${cd_root}"
   cd "${uzip}" && tar -cf - boot | tar -xf - -C "${cd_root}"
