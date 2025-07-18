@@ -324,7 +324,10 @@ uzip()
   install -o root -g wheel -m 755 -d "${cd_root}"
   # Fix stray characters in spec.user
   sed -i '' -e 's|\\133||g' "${livecd}"/spec.user
-  sed -i '' -e 's|\\040|\\ |g' "${livecd}/spec.user" # Fix spaces in filenames
+  # Fix spaces in filenames by quoting
+  sed -i '' -e 's|\\040| |g' "${livecd}/spec.user"
+  sed -i '' -e "s|^\./|'./| g" "${livecd}"/spec.user
+  sed -i '' -e "s| type=|' type=|g" "${livecd}"/spec.user
   cat "${livecd}"/spec.user
   ( cd "${release}" ; makefs -b 75% -f 75% -R 262144 "${cd_root}/rootfs.ufs" "${livecd}"/spec.user )
   ls -lh "${cd_root}/rootfs.ufs"
