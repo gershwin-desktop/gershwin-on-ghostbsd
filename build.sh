@@ -356,11 +356,12 @@ boot()
   find "${cd_root}"/boot/kernel -type f -name '*.ko' -delete
   mkdir -p "${cd_root}"/dev "${cd_root}"/etc # TODO: Create all the others here as well instead of keeping them in overlays/boot
   cp "${release}"/etc/login.conf  "${cd_root}"/etc/ # Workaround for: init: login_getclass: unknown class 'daemon'
-  cd "${release}" && tar -cf - rescue | tar -xf - -C "${cd_root}" # /rescue is full of hardlinks
+  tar -cf - rescue | tar -xf - -C "${cd_root}" # /rescue is full of hardlinks
   # Must not try to load tmpfs module in FreeBSD 13 and later, 
   # because it will prevent the one in the kernel from working
   sed -i '' -e 's|^tmpfs_load|# load_tmpfs_load|g' "${cd_root}"/boot/loader.conf
   rm "${cd_root}"/boot/kernel/tmpfs.ko*
+  cd -
 }
 
 image()
