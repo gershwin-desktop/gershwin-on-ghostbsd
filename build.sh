@@ -435,6 +435,5 @@ if [ "${desktop}" != "test" ] ; then
 fi
 developer
 uzip
-ramdisk
 boot
 image
