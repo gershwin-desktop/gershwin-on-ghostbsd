@@ -1,4 +1,4 @@
-ghostbsd-build
+ghostbsd-build <br> [![GitHub release (latest by date)](https://img.shields.io/github/v/release/probonopd/ghostbsd-build)](../../releases/latest) [![GitHub all releases](https://img.shields.io/github/downloads/probonopd/ghostbsd-build/total)](../../releases) [![GitHub release (latest by date)](https://img.shields.io/github/downloads/probonopd/ghostbsd-build/latest/total)](../../releases/latest) [![Build Status](https://api.cirrus-ci.com/github/probonopd/ghostbsd-build.svg)](https://cirrus-ci.com/github/probonopd/ghostbsd-build)
 ==============
 Live media creator for GhostBSD distribution
 
