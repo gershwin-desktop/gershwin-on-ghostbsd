@@ -95,7 +95,7 @@ label="GhostBSD"
 
 workspace()
 {
-  mkdir -p "${livecd}" "${base}" "${iso}" "${packages}" "${uzip}" "${cd_root}" >/dev/null 2>/dev/null
+  mkdir -p "${livecd}" "${base}" "${iso}" "${packages_storage}" "${uzip}" "${cd_root}" >/dev/null 2>/dev/null
 }
 
 base()
