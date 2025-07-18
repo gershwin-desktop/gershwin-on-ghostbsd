@@ -110,13 +110,13 @@ base()
   mkdir -p ${release}/etc
   cp /etc/resolv.conf ${release}/etc/resolv.conf
   mkdir -p ${release}/var/cache/pkg
-  mount_nullfs ${packages_storage} ${release}/var/cache/pkg
+  ## mount_nullfs ${packages_storage} ${release}/var/cache/pkg
   # shellcheck disable=SC2086
   pkg -r ${release} -R "${cwd}/pkg/" install -y -r ${PKG_CONF}_base ${base_list}
   # shellcheck disable=SC2086
   pkg -r ${release} -R "${cwd}/pkg/" set -y -v 1 ${vital_base}
   rm ${release}/etc/resolv.conf
-  umount ${release}/var/cache/pkg
+  ## umount ${release}/var/cache/pkg
   touch ${release}/etc/fstab
   mkdir ${release}/cdrom
 }
@@ -309,11 +309,13 @@ developer()
 
   # Create the developer image
   makefs -o label="Developer" -R 262144 "${iso}/developer.ufs" "${livecd}"/spec.developer.sorted
+  ls -lh "${iso}/developer.ufs"
   developerimagename=$(basename $(echo ${iso_path} | sed -e 's|.iso$|.developer.img|g'))
   mkuzip -o "${iso}/${developerimagename}" "${iso}/developer.ufs"
   rm "${iso}/developer.ufs"
   # md5 "${iso}/${developerimagename}" > "${iso}/${developerimagename}.md5"
   sha256 "${iso}/${developerimagename}" | cut -d " " -f 4 > "${iso}/${developerimagename}.sha256"
+  ls -lh "${iso}/${developerimagename}"
   cd -
 
 }
@@ -322,11 +324,12 @@ uzip()
 {
   install -o root -g wheel -m 755 -d "${cd_root}"
   ( cd "${uzip}" ; makefs -b 75% -f 75% -R 262144 "${cd_root}/rootfs.ufs" ../spec.user )
+  ls -lh "${cd_root}/rootfs.ufs"
   mkdir -p "${cd_root}/boot/"
   mkuzip -o "${cd_root}/boot/rootfs.uzip" "${cd_root}/rootfs.ufs"
 
   rm -f "${cd_root}/rootfs.ufs"
-  
+  ls -lh "${cd_root}/boot/rootfs.uzip"
 }
 
 boot() 
