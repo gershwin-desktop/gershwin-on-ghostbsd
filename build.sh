@@ -322,8 +322,8 @@ developer()
 uzip() 
 {
   install -o root -g wheel -m 755 -d "${cd_root}"
-  cat ../spec.user
-  ( cd "${release}" ; makefs -b 75% -f 75% -R 262144 "${cd_root}/rootfs.ufs" ../spec.user )
+  cat "${livecd}"/spec.user
+  ( cd "${release}" ; makefs -b 75% -f 75% -R 262144 "${cd_root}/rootfs.ufs" "${livecd}"/spec.user )
   ls -lh "${cd_root}/rootfs.ufs"
   mkdir -p "${cd_root}/boot/"
   mkuzip -o "${cd_root}/boot/rootfs.uzip" "${cd_root}/rootfs.ufs"
