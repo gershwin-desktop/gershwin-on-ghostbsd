@@ -268,10 +268,10 @@ developer()
   # Tools like filelight and sysutils/k4dirstat might also be helpful
 
   # Clean up locally in this function in case the user did not run cleanup()
-  if [ -d "${livecd}" ] ;then
-    chflags -R noschg ${cdroot} >/dev/null 2>/dev/null || true
-    rm -rf ${cdroot} >/dev/null 2>/dev/null || true
-  fi
+  # if [ -d "${livecd}" ] ;then
+  #   chflags -R noschg ${cdroot} >/dev/null 2>/dev/null || true
+  #   rm -rf ${cdroot} >/dev/null 2>/dev/null || true
+  # fi
 
   cd  "${uzip}"
   rm -rf /root/.cache 2>/dev/null 2>&1 | true
