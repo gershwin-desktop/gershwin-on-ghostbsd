@@ -81,6 +81,7 @@ workdir="/usr/local"
 livecd="${workdir}/ghostbsd-build"
 base="${livecd}/base"
 iso="${livecd}/iso"
+uzip="${livecd}/uzip"
 packages_storage="${livecd}/packages"
 release="${livecd}/release"
 export release
