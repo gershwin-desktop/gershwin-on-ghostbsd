@@ -353,12 +353,7 @@ developer()
   # Create the developer image
   makefs -o label="Developer" -R 262144 "${iso}/developer.ufs" "${livecd}"/spec.developer.sorted
   developerimagename=$(basename $(echo ${iso_path} | sed -e 's|.iso$|.developer.img|g'))
-  if [ $MAJOR -gt 13 ] ; then
-    mkuzip -o "${iso}/${developerimagename}" "${iso}/developer.ufs"
-  else
-    # Use zstd when possible, which is available in FreeBSD beginning with 13 but broken in 14 (FreeBSD bug 267082)
-    mkuzip -A zstd -C 15 -d -s 262144 -o "${iso}/${developerimagename}" "${iso}/developer.ufs"
-  fi
+  mkuzip -o "${iso}/${developerimagename}" "${iso}/developer.ufs"
   rm "${iso}/developer.ufs"
   # md5 "${iso}/${developerimagename}" > "${iso}/${developerimagename}.md5"
   sha256 "${iso}/${developerimagename}" | cut -d " " -f 4 > "${iso}/${developerimagename}.sha256"
@@ -371,12 +366,7 @@ uzip()
   install -o root -g wheel -m 755 -d "${cd_root}"
   ( cd "${uzip}" ; makefs -b 75% -f 75% -R 262144 "${cd_root}/rootfs.ufs" ../spec.user )
   mkdir -p "${cd_root}/boot/"
-  if [ $MAJOR -gt 13 ] ; then
-    mkuzip -o "${cd_root}/boot/rootfs.uzip" "${cd_root}/rootfs.ufs"
-  else
-    # Use zstd when possible, which is available in FreeBSD beginning with 13 but broken in 14 (FreeBSD bug 267082)
-    mkuzip -A zstd -C 15 -d -s 262144 -o "${cd_root}/boot/rootfs.uzip" "${cd_root}/rootfs.ufs"
-  fi
+  mkuzip -o "${cd_root}/boot/rootfs.uzip" "${cd_root}/rootfs.ufs"
 
   rm -f "${cd_root}/rootfs.ufs"
   
@@ -408,12 +398,10 @@ boot()
   mkdir -p "${cd_root}"/dev "${cd_root}"/etc # TODO: Create all the others here as well instead of keeping them in overlays/boot
   cp "${uzip}"/etc/login.conf  "${cd_root}"/etc/ # Workaround for: init: login_getclass: unknown class 'daemon'
   cd "${uzip}" && tar -cf - rescue | tar -xf - -C "${cd_root}" # /rescue is full of hardlinks
-  if [ $MAJOR -gt 12 ] ; then
-    # Must not try to load tmpfs module in FreeBSD 13 and later, 
-    # because it will prevent the one in the kernel from working
-    sed -i '' -e 's|^tmpfs_load|# load_tmpfs_load|g' "${cd_root}"/boot/loader.conf
-    rm "${cd_root}"/boot/kernel/tmpfs.ko*
-  fi
+  # Must not try to load tmpfs module in FreeBSD 13 and later, 
+  # because it will prevent the one in the kernel from working
+  sed -i '' -e 's|^tmpfs_load|# load_tmpfs_load|g' "${cd_root}"/boot/loader.conf
+  rm "${cd_root}"/boot/kernel/tmpfs.ko*
 }
 
 image()
