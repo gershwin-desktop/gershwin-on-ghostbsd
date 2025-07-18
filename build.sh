@@ -256,6 +256,116 @@ desktop_config()
   sh "${cwd}/desktop_config/${desktop}.sh"
 }
 
+developer()
+{
+  # Remove files that are non-essential to the working of
+  # the system, especially files only needed by developers
+  # and non-localized documentation not understandable to
+  # non-English speakers and put them into developer.img
+  # TODO: Find more files to be removed; the largest files
+  # in a directory can be listed with
+  # ls -lhS /usr/lib | head
+  # Tools like filelight and sysutils/k4dirstat might also be helpful
+
+  # Clean up locally in this function in case the user did not run cleanup()
+  if [ -d "${livecd}" ] ;then
+    chflags -R noschg ${cdroot} >/dev/null 2>/dev/null || true
+    rm -rf ${cdroot} >/dev/null 2>/dev/null || true
+  fi
+
+  cd  "${uzip}"
+  rm -rf /root/.cache 2>/dev/null 2>&1 | true
+  
+  # Create a spec file that describes the whole filesystem
+  mtree -p  . -c > "${livecd}"/spec
+
+  # Create a spec file with one line for each file, directory, and symlink
+  mtree -C -R nlink,time,size -f "${livecd}"/spec > "${livecd}"/spec.annotated
+
+  # Annotate all developer-oriented files with '# developery<rule_id>'
+  # The annotations are numbered with <rule_id> so that we can see which rule
+  # was responsible for flagging something as a developer-oriented file
+  sed -i '' -e 's|^\./Install.*|& # developer|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|.*/doc/.*|& # developer1|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|.*/docs/.*|& # developer2|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|.*\.la.*|& # developer3|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|.*/man/.*|& # developer4|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/include/.*|& # developer5|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/local/include/.*|& # developer6|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|.*\.h\ .*|& # developer7|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|.*\.a\ .*|& # developer8|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|.*\.o\ .*|& # developer9|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|.*-doc/.*|& # developer10|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./Applications/Developer/.*|& # developer11|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|.*/debug/.*|& # developer12|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|.*/src/.*|& # developer13|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|.*/git-core/.*|& # developer14|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|.*/git/.*|& # developer15|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|.*/devhelp/.*|& # developer16|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|.*/examples/.*|& # developer17|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/bin/svn.*|& # developer18|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/bin/clang.*|& # developer19|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/bin/c++.*|& # developer20|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/bin/cpp.*|& # developer21|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/bin/cc.*|& # developer22|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/bin/lldb.*|& # developer23|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/local/bin/ccxx.*|& # developer24|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/bin/llvm.*|& # developer25|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/bin/ld.lld.*|& # developer26|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/bin/ex\ .*|& # developer27|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/bin/nex\ .*|& # developer28|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/bin/nvi\ .*|& # developer29|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/bin/vi\ .*|& # developer30|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/bin/view\ .*|& # developer31|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/local/llvm.*/bin/.*|& # developer32|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/local/llvm.*/include/.*|& # developer33|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/local/llvm.*/libexec/.*|& # developer34|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/local/llvm.*/share/.*|& # developer35|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/local/llvm.*/lib/clang/.*|& # developer36|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/local/llvm.*/lib/cmake/.*|& # developer37|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/local/llvm.*/lib/python.*|& # developer38|' "${livecd}"/spec.annotated
+  # 'libLLVM-*.so*' must NOT be deleted as it is needed for graphics drivers
+  sed -i '' -e 's|^\./usr/lib/clang/.*/include/.*|& # developer39|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/local/llvm.*/lib/libclang.*|& # developer40|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/local/llvm.*/lib/liblldb.*|& # developer41|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/local/lib/python.*/test/.*|& # developer42|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/local/share/info/.*|& # developer43|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/local/share/gir-.*|& # developer44|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./Applications/Utilities/BuildNotify.app.*|& # developer45|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./Applications/Autostart/BuildNotify.app.*|& # developer46|' "${livecd}"/spec.annotated
+  sed -i '' -e 's|^\./usr/sbin/portsnap\ .*|& # developer47|' "${livecd}"/spec.annotated
+  
+  cp "${livecd}"/spec.annotated "${livecd}"/spec.user
+  cp "${livecd}"/spec.annotated "${livecd}"/spec.developer
+
+  # Delete the annotated lines from spec.developer and spec.user, respectively
+  sed -i '' -e '/# developer/!d' "${livecd}"/spec.developer
+  # Add back all directories, otherwise we get permissions issues
+  grep " type=dir " "${livecd}"/spec.annotated >> "${livecd}"/spec.developer
+  grep "^\./\.hidden" "${livecd}"/spec.annotated >> "${livecd}"/spec.developer
+  cat "${livecd}"/spec.developer | sort | uniq > "${livecd}"/spec.developer.sorted
+  sed -i '' '/^$/d' "${livecd}"/spec.developer.sorted # Remove empty lines
+  sed -i '' -e '/# developer/d' "${livecd}"/spec.user
+  sed -i '' '/^$/d' "${livecd}"/spec.user # Remove empty lines
+  echo "$(cat "${livecd}"/spec.developer.sorted | wc -l) items for developer image"
+  echo "$(cat "${livecd}"/spec.user | wc -l) items for user image"
+
+  # Create the developer image
+  makefs -o label="Developer" -R 262144 "${iso}/developer.ufs" "${livecd}"/spec.developer.sorted
+  developerimagename=$(basename $(echo ${isopath} | sed -e 's|.iso$|.developer.img|g'))
+  if [ $MAJOR -gt 13 ] ; then
+    mkuzip -o "${iso}/${developerimagename}" "${iso}/developer.ufs"
+  else
+    # Use zstd when possible, which is available in FreeBSD beginning with 13 but broken in 14 (FreeBSD bug 267082)
+    mkuzip -A zstd -C 15 -d -s 262144 -o "${iso}/${developerimagename}" "${iso}/developer.ufs"
+  fi
+  rm "${iso}/developer.ufs"
+  # md5 "${iso}/${developerimagename}" > "${iso}/${developerimagename}.md5"
+  sha256 "${iso}/${developerimagename}" | cut -d " " -f 4 > "${iso}/${developerimagename}.sha256"
+  cd -
+
+}
+
 uzip() 
 {
   install -o root -g wheel -m 755 -d "${cd_root}"
@@ -335,6 +445,7 @@ if [ "${desktop}" != "test" ] ; then
   desktop_config
   ghostbsd_config
 fi
+developer
 uzip
 ramdisk
 boot
