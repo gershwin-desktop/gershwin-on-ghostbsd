@@ -400,7 +400,7 @@ if [ "${desktop}" != "test" ] ; then
   desktop_config
   ghostbsd_config
 fi
-developer
+# developer
 uzip
 boot
 image
