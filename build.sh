@@ -324,7 +324,7 @@ uzip()
   install -o root -g wheel -m 755 -d "${cd_root}"
   cat "${livecd}"/spec.user
   # Fix stray characters in spec.user
-  sed -i '' -e '|\\133||' "${livecd}"/spec.user
+  sed -i '' -e 's|\\133||g' "${livecd}"/spec.user
   sed -i '' -e 's|\\040|\\ |g' "${livecd}/spec.user" # Fix spaces in filenames
   ( cd "${release}" ; makefs -b 75% -f 75% -R 262144 "${cd_root}/rootfs.ufs" "${livecd}"/spec.user )
   ls -lh "${cd_root}/rootfs.ufs"
