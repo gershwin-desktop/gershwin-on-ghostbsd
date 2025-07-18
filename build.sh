@@ -327,7 +327,7 @@ uzip()
   # Fix paths in filenames by quoting
   sed -i '' -e 's|\\040| |g' "${livecd}/spec.user"
   sed -i '' -e 's|^\.|".| g' "${livecd}"/spec.user # mtree format needs double quotes
-  sed -i '' -e "s| type=|' type=|g" "${livecd}"/spec.user
+  sed -i '' -e 's| type=|" type=|g' "${livecd}"/spec.user
   cat "${livecd}"/spec.user
   ( cd "${release}" ; makefs -b 75% -f 75% -R 262144 "${cd_root}/rootfs.ufs" "${livecd}"/spec.user )
   ls -lh "${cd_root}/rootfs.ufs"
