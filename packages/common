@@ -1,10 +1,8 @@
 cups
 cups-filters
 drm-kmod
-evolution
 exfat-utils
 firefox
-fish
 foomatic-db
 fusefs-exfat
 fusefs-ext2
@@ -15,13 +13,9 @@ gbi
 ghostbsd-fonts
 ghostbsd-icons
 ghostbsd-utils
-gnome-keyring
 nss_mdns
 pc-sysinstall
 pkg
-python
-rhythmbox
-shotwell
 slick-greeter
 system-config-printer
 unzip
