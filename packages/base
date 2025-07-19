@@ -25,8 +25,8 @@ GhostBSD-ccdconfig
 GhostBSD-ccdconfig-man
 GhostBSD-certctl
 GhostBSD-certctl-man
-GhostBSD-clang
-GhostBSD-clang-man
+### GhostBSD-clang
+### GhostBSD-clang-man
 GhostBSD-clibs
 GhostBSD-clibs-lib32
 GhostBSD-clibs-man
