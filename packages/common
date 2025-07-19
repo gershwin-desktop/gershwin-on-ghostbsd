@@ -2,7 +2,6 @@ cups
 cups-filters
 drm-kmod
 exfat-utils
-firefox
 foomatic-db
 fusefs-exfat
 fusefs-ext2
@@ -10,16 +9,12 @@ fusefs-hfsfuse
 fusefs-lkl
 fusefs-ntfs
 gbi
-ghostbsd-fonts
-ghostbsd-icons
 ghostbsd-utils
 nss_mdns
 pc-sysinstall
 pkg
 slick-greeter
-system-config-printer
 unzip
-vlc
 webrtc-audio-processing
 xconfig
 xorg-minimal
