@@ -386,8 +386,8 @@ image()
   tracker3="udp://tracker.coppersurfer.tk:6969"
   echo "Creating sha256 \"${iso}/${shafile}\""
   sha256 "$(echo "${iso_path}" | cut -d / -f6)" > "${iso}/${shafile}"
-  transmission-create -o "${iso}/${torrent}" -t ${tracker1} -t ${tracker2} -t ${tracker3} "${iso_path}"
-  chmod 644 "${iso}/${torrent}"
+  transmission-create -o "${iso}/${torrent}" -t ${tracker1} -t ${tracker2} -t ${tracker3} "${iso_path}" || true # Exit status: 127
+  chmod 644 "${iso}/${torrent}" || true
   cd -
 }
 
