@@ -41,6 +41,7 @@ GhostBSD-ipfw
 GhostBSD-iscsi
 GhostBSD-jail
 GhostBSD-kernel-generic
+GhostBSD-libexecinfo
 GhostBSD-locales
 GhostBSD-mlx-tools
 GhostBSD-mtree
