@@ -113,7 +113,6 @@ base()
   # shellcheck disable=SC2086
   pkg -r ${release} -R "${cwd}/pkg/" install -y -r ${PKG_CONF}_base ${base_list}
   # shellcheck disable=SC2086
-  # Mark packages in vital/base as vital; this implies that vital/base must be a subset of base
   pkg -r ${release} -R "${cwd}/pkg/" set -y -v 1 ${vital_base}
   rm ${release}/etc/resolv.conf
   ## umount ${release}/var/cache/pkg
@@ -149,6 +148,7 @@ packages_software()
   pkg -c ${release} install -y ${de_packages} ${common_packages} ${drivers_packages}
   # shellcheck disable=SC2086
   pkg -c ${release} set -y -v 1 ${vital_de_packages}  ${vital_common_packages}
+  pkg -c ${release} info -a -s | sort -k2 -hr | head -50
   mkdir -p ${release}/proc
   mkdir -p ${release}/compat/linux/proc
   rm ${release}/etc/resolv.conf
