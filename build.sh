@@ -361,6 +361,7 @@ boot()
   mkdir -p "${cd_root}"/bin/
   cp "${release}"/COPYRIGHT "${cd_root}"/
   cp -R "${cwd}/overlays/boot/" "${cd_root}"
+  chmod +x "${cwd}/overlays/boot/init_script"
   cd "${release}" && tar -cf - boot | tar -xf - -C "${cd_root}"
   # Remove all modules from the ISO that is not required before the root filesystem is mounted
   # The whole directory /boot/modules is unnecessary
