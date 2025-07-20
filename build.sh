@@ -217,7 +217,7 @@ downsize()
 {
   # Downsize huge llvm package which gets drawn in by xorg
   # Delete everything except libLLVM*
-  rm -f $(pkg info -l llvm19 | grep -v "/usr/local/llvm19/lib/libLLVM.*so.*" | grep "/usr/local/" | sed -e 's|/usr|${release}/usr|g' | xargs)
+  rm -f $(pkg -c ${release} info -l llvm19 | grep -v "/usr/local/llvm19/lib/libLLVM.*so.*" | grep "/usr/local/" | sed -e 's|/usr|${release}/usr|g' | xargs)
   # TODO: Mark llvm9 package as uninstalled so that it gets installed if the user insatlls something that needs it
 }
 
