@@ -113,6 +113,7 @@ base()
   # shellcheck disable=SC2086
   pkg -r ${release} -R "${cwd}/pkg/" install -y -r ${PKG_CONF}_base ${base_list}
   # shellcheck disable=SC2086
+  # Mark packages in vital/base as vital; this implies that vital/base must be a subset of base
   pkg -r ${release} -R "${cwd}/pkg/" set -y -v 1 ${vital_base}
   rm ${release}/etc/resolv.conf
   ## umount ${release}/var/cache/pkg
