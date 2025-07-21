@@ -358,13 +358,13 @@ uzip()
 
 boot() 
 {
-  mkdir -p "${cd_root}"/bin/
-  cp "${release}"/COPYRIGHT "${cd_root}"/
-  cp -R "${cwd}/overlays/boot/" "${cd_root}"
-  cp "${cwd}/overlays/boot/boot/loader.conf" "${cd_root}/boot/"
-  chmod +x "${cwd}/overlays/boot/boot/init_script"
   cd "${release}" && tar -cf - boot | tar -xf - -C "${cd_root}"
-  # Remove all modules from the ISO that is not required before the root filesystem is mounted
+  mkdir -p "${cd_root}"/bin/ "${cd_root}"/dev "${cd_root}"/etc # TODO: Create all the others here as well instead of keeping them in overlays/boot
+  cp "${release}"/COPYRIGHT "${cd_root}"/
+  chmod +x "${cwd}/overlays/boot/boot/init_script"
+  cp -R "${cwd}/overlays/boot/" "${cd_root}"
+  cat "${cd_root}"/boot/loader.conf
+  # Remove all modules from the ISO that are not required before the root filesystem is mounted
   # The whole directory /boot/modules is unnecessary
   rm -rf "${cd_root}"/boot/modules/*
   # Remove modules in /boot/kernel that are not loaded at boot time
@@ -381,7 +381,6 @@ boot()
   # Compress the modules in a way the kernel understands
   find "${cd_root}"/boot/kernel -type f -name '*.ko' -exec gzip -f {} \;
   find "${cd_root}"/boot/kernel -type f -name '*.ko' -delete
-  mkdir -p "${cd_root}"/dev "${cd_root}"/etc # TODO: Create all the others here as well instead of keeping them in overlays/boot
   cp "${release}"/etc/login.conf  "${cd_root}"/etc/ # Workaround for: init: login_getclass: unknown class 'daemon'
   tar -cf - rescue | tar -xf - -C "${cd_root}" # /rescue is full of hardlinks
   # Must not try to load tmpfs module in FreeBSD 13 and later, 
