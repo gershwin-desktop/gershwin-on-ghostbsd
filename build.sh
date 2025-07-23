@@ -135,6 +135,7 @@ packages_software()
   if [ "${build_type}" = "unstable" ] ; then
     cp pkg/GhostBSD_Unstable.conf ${release}/etc/pkg/GhostBSD.conf
   fi
+  mkdir-p ${release}/usr/local/etc/pkg/repos
   cp pkg/XLibre.conf ${release}/usr/local/etc/pkg/repos/XLibre.conf
   cp /etc/resolv.conf ${release}/etc/resolv.conf
   mkdir -p ${release}/var/cache/pkg
