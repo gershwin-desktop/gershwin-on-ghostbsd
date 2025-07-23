@@ -17,5 +17,6 @@ slick-greeter
 unzip
 webrtc-audio-processing
 xconfig
-xorg-minimal
+xlibre-drivers
+xlibre-server
 zip
