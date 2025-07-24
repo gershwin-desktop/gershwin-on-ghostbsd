@@ -147,6 +147,7 @@ packages_software()
   drivers_packages="$(cat "${cwd}/packages/drivers")"
   vital_de_packages="$(cat "${cwd}/packages/vital/${desktop}")"
   vital_common_packages="$(cat "${cwd}/packages/vital/common")"
+  pkg -c ${release} install -y xlibre-server xlibre-drivers
   # shellcheck disable=SC2086
   pkg -c ${release} install -y ${de_packages} ${common_packages} ${drivers_packages}
   # shellcheck disable=SC2086
