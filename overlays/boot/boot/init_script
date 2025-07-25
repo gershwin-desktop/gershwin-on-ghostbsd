@@ -144,9 +144,9 @@ pw groupmod cups -m liveuser
 # TODO: Move to a rc script that also runs in installed mode
 if [ "$(sysctl -q -n kern.consmute)" = "1" ] ; then
   # Xorg on Ctrl-Alt-F1
-  sed -i '' -e 's|vt09|vt01|g' /usr/local/etc/slim.conf
+  # sed -i '' -e 's|vt09|vt01|g' /usr/local/etc/slim.conf
   # No text consoles on Ctrl-Alt-F2
-  echo "" > /etc/ttys
+  # echo "" > /etc/ttys
 else
   # Prevent the kernel from rebooting immediately at a kernel panic
   # so that one can see the last error message
