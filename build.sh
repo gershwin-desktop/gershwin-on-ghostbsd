@@ -257,7 +257,7 @@ boot()
 {
   cd "${release}" && tar -cf - boot | tar -xf - -C "${cd_root}"
   mkdir -p "${cd_root}"/bin/ "${cd_root}"/dev "${cd_root}"/etc # TODO: Create all the others here as well instead of keeping them in overlays/boot
-  mkdir -p "${cd_root}"/bin/compat/linux/proc "${cd_root}"/bin/compat/linux/sys "${cd_root}"/bin/compat/linux/dev
+  mkdir -p "${cd_root}"/compat/linux/proc "${cd_root}"/compat/linux/sys "${cd_root}"/compat/linux/dev
   cp "${release}"/COPYRIGHT "${cd_root}"/
   chmod +x "${cwd}/overlays/boot/boot/init_script"
   cp -R "${cwd}/overlays/boot/" "${cd_root}"
