@@ -4,6 +4,9 @@ slim
 xterm
 nano
 gershwin-desktop
-gershwin-gbi-wrapper
-gershwin-ghostbsd-wrappers
-gershwin-firefox-wrapper
+gershwin-bootenvironments
+gershwin-display
+gershwin-globalshortcuts
+gershwin-globalshortcutsd
+gershwin-loginwindow
+gershwin-startupdisk
