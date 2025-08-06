@@ -1,0 +1,52 @@
+#!/bin/sh
+export DISPLAY=:0
+
+export GNUSTEP_MAKEFILES=/usr/local/GNUstep/System/Library/Makefiles
+#. /usr/local/GNUstep/System/Library/Makefiles/GNUstep.sh
+
+defaults write NSGlobalDomain GSTheme Rik
+
+export CC=clang19
+export SUDO_ASKPASS=/System/Library/Tools/SudoAskPass
+/System/Library/Tools/globalshortcutsd &
+
+# Start D-Bus session if not already running
+if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
+    eval "$(dbus-launch --sh-syntax --exit-with-x11)"
+fi
+
+# sudo service dbus stop
+
+#/home/User/gershwin-prefpanes/minibus/obj/minibus --debug 2>&1 >/tmp/minibus.log &
+#export DBUS_SESSION_BUS_ADDRESS="unix:path=/tmp/minibus-socket"
+
+export NO_AT_BRIDGE=1
+
+# Launch window manager and panel in background
+xfwm4 &
+#/home/user/uroswm/uroswm/uroswm &
+
+# Start VirtualBox client when the guest additions are installed
+if [ -f "/usr/local/bin/VBoxClient-all" ] ; then
+  /usr/local/bin/VBoxClient-all &
+fi
+
+# Temporary panel until GNUstep native panel replaces
+xfce4-panel --sm-client-disable 2>&1 >/tmp/xfce-panel.log  &
+
+# Fix copy / paste issues
+xfce4-clipman &
+
+# Start Network manager tray
+sudo /usr/local/bin/networkmgr &
+
+# Start Update station stray for update notifications
+sudo update-station &
+
+xterm &
+
+# Optional: small delay to allow environment to settle
+sleep 2
+
+# Launch GWorkspace
+openapp GWorkspace
