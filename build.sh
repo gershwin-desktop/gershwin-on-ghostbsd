@@ -196,6 +196,11 @@ rc()
   chroot ${release} sysrc ntpd_enable="YES"
   chroot ${release} sysrc ntpd_sync_on_start="YES"
   chroot ${release} sysrc clear_tmp_enable="YES"
+
+  if [ "${desktop}" == "gershwin" ] ; then
+    chroot ${release} sysrc slim_enable="NO"
+    chroot ${release} sysrc loginwindow_enable="YES"
+  fi
 }
 
 ghostbsd_config()
