@@ -24,5 +24,5 @@ patch_etc_files
 community_setup_liveuser_gershwin
 community_setup_autologin_gershwin
 gershwin_setup
-# setup_xinit
+setup_xinit
 final_setup
