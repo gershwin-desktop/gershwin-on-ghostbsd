@@ -7,15 +7,10 @@ set -e -u
 . "${cwd}/common_config/finalize.sh"
 . "${cwd}/common_config/setuser.sh"
 
-lightdm_setup()
+gershwin_setup()
 {
-  sed -i '' "s@#greeter-session=example-gtk-gnome@greeter-session=slick-greeter@" "${release}/usr/local/etc/lightdm/lightdm.conf"
-  sed -i '' "s@#user-session=default@user-session=gershwin@" "${release}/usr/local/etc/lightdm/lightdm.conf"
-}
-
-slim_setup()
-{
-  cp -R "${cwd}/overlays/uzip/slim/files/" "${release}"
+  chmod +x "${cwd}/overlays/uzip/gershwin/files/usr/local/bin/gershwin-x11"
+  cp -R "${cwd}/overlays/uzip/gershwin/files/" "${release}"
 }
 
 setup_xinit()
@@ -28,7 +23,6 @@ setup_xinit()
 patch_etc_files
 community_setup_liveuser_gershwin
 community_setup_autologin_gershwin
-lightdm_setup
-slim_setup
+gershwin_setup
 setup_xinit
 final_setup
