@@ -137,7 +137,9 @@ packages_software()
   fi
   # mkdir -p ${release}/usr/local/etc/pkg/repos
   # cp pkg/XLibre.conf ${release}/usr/local/etc/pkg/repos/XLibre.conf
-  cp pkg/XLibre.conf ${release}/etc/pkg/XLibre.conf
+  cp pkg/XLibre.conf ${release}/etc/pkg/
+  cp pkg/Gershwin.conf ${release}/etc/pkg/
+  cp pkg/Gershwin-probonopd.conf ${release}/etc/pkg/
   cp /etc/resolv.conf ${release}/etc/resolv.conf
   mkdir -p ${release}/var/cache/pkg
   mount_nullfs ${packages_storage} ${release}/var/cache/pkg
