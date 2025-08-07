@@ -315,6 +315,21 @@ image()
   cd -
 }
 
+split()
+{
+  # units -o "%0.f" -t "2 gigabytes" "bytes"
+  THRESHOLD_BYTES=2147483647
+  # THRESHOLD_BYTES=1999999999
+  ISO_SIZE=$(stat -f%z "${iso_path}")
+  if [ $ISO_SIZE -gt $THRESHOLD_BYTES ] ; then
+    echo "Size exceeds GitHub Releases file size limit; splitting the ISO"
+    sudo split -d -b "$THRESHOLD_BYTES" -a 1 "${iso_path}" "${iso_path}.part"
+    echo "Split the ISO, deleting the original"
+    rm "${iso_path}"
+    ls -l "${iso_path}"*
+  fi
+}
+
 workspace
 base
 set_ghostbsd_version
@@ -329,3 +344,8 @@ downsize
 uzip
 boot
 image
+if [ -n "$CIRRUS_CI" ] ; then
+  # On Cirrus CI we want to upload to GitHub Releases which has a 2 GB file size limit,
+  # hence we need to split the ISO there if it is too large
+  split
+fi
