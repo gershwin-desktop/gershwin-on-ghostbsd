@@ -46,13 +46,13 @@ task:
     
   Build_script:
     - export VER=$(uname -r | cut -d "-" -f 1)
-    - /bin/sh -x ./build.sh -d "$DESKTOP" -b "unstable" # Gershwin is not in FreeBSD release yet
+    - /bin/sh ./build.sh -d "$DESKTOP" -b "unstable" # Gershwin is not in FreeBSD release yet
     - df -h
-    - ls -lh /usr/local/ghostbsd-build/iso/*.iso || false # Error out if ISO was not produced to mitigate the above
+    - ls -lh /usr/local/ghostbsd-build/iso/*.iso* || false # Error out if ISO was not produced to mitigate the above
     # ( cd /usr/local/ghostbsd-build/ ; zsyncmake *.iso )
     - rm -f /usr/local/ghostbsd-build/amd64/cache/packages/transient/* || true # Don't cache transient pkg
     
   Upload_script:
     - export VER=$(uname -r | cut -d "-" -f 1) # No way to pass on from Build_script to Upload_script?
-    - ls -lh /usr/local/ghostbsd-build/iso/
+    - ls -lh /usr/local/ghostbsd-build/iso/*
     - case "$CIRRUS_BRANCH" in *pull/*) echo skipping since PR ;; * ) wget -c -q https://github.com/tcnksm/ghr/files/5247714/ghr.zip ; unzip ghr.zip ; ./ghr -prerelease -delete -t "${GITHUB_TOKEN}" -u "${CIRRUS_REPO_OWNER}" -r "${CIRRUS_REPO_NAME}" -b "This is an __experimental build__ for __developers__ and __testers__. Regular users should get the latest released version instead." -c "${CIRRUS_CHANGE_IN_REPO}" "${CIRRUS_BRANCH}"-"${VER}" /usr/local/ghostbsd-build/iso/ ; esac
