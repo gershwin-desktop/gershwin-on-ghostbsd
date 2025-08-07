@@ -94,6 +94,17 @@ label="GhostBSD"
 
 workspace()
 {
+  umount "${release}/var/cache/pkg" || true
+  umount "${release}/dev" || true
+  
+  # If release or cd_root directories already exist, remove them
+  chflags -R noschg ${release} ${cd_root} >/dev/null 2>/dev/null || true
+  if [ -d "${release}" ] ; then
+    rm -rf "${release}" || true
+  fi
+  if [ -d "${cd_root}" ] ; then
+    rm -rf "${cd_root}" || true
+  fi
   mkdir -p "${livecd}" "${base}" "${iso}" "${packages_storage}" "${release}" "${cd_root}" >/dev/null 2>/dev/null
 }
 
@@ -117,7 +128,7 @@ base()
   rm ${release}/etc/resolv.conf
   ## umount ${release}/var/cache/pkg
   touch ${release}/etc/fstab
-  mkdir ${release}/cdrom
+  mkdir -p ${release}/cdrom
 }
 
 set_ghostbsd_version()
@@ -168,7 +179,7 @@ fetch_x_drivers_packages()
   else
     pkg_url=$(pkg -R pkg/ -vv | grep '/unstable.*/latest' | cut -d '"' -f2)
   fi
-  mkdir ${release}/xdrivers
+  mkdir -p ${release}/xdrivers
   yes | pkg -R "${cwd}/pkg/" update
   echo """$(pkg -R "${cwd}/pkg/" rquery -x -r ${PKG_CONF} '%n %n-%v.pkg' 'nvidia-driver' | grep -v libva)""" > ${release}/xdrivers/drivers-list
   pkg_list="""$(pkg -R "${cwd}/pkg/" rquery -x -r ${PKG_CONF} '%n-%v.pkg' 'nvidia-driver' | grep -v libva)"""
@@ -230,16 +241,15 @@ downsize()
 {
   # Downsize huge llvm package which gets drawn in by xorg
   # Delete everything except libLLVM*
-  pkg -c "${release}" info -l llvm19 \
-  | grep -v '/usr/local/llvm19/lib/libLLVM.*so.*' \
-  | grep '/usr/local/' \
-  | sed -e "s|/usr|${release}/usr|g" \
-  | sed 's/^[[:space:]]*//' \
-  | while IFS= read -r file; do
-      rm -f "$file"
-    done
-
+  mkdir -p "${release}/tmp/"
+  mv "${release}/usr/local/llvm19/lib/"libLLVM*.so* "${release}/tmp/"
+  rm -rf "${release}/usr/local/llvm19"
+  mkdir -p "${release}/usr/local/llvm19/lib/"
+  mv "${release}/tmp/"libLLVM*.so* "${release}/usr/local/llvm19/lib/"
   # TODO: Mark llvm9 package as uninstalled so that it gets installed if the user insatlls something that needs it
+
+  # Replace identical files with symlinks in rescue
+  fdupes -r -S "${cd_root}/rescue"
 }
 
 uzip() 

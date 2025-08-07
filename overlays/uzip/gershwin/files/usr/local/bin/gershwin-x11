@@ -1,8 +1,8 @@
 #!/bin/sh
 export DISPLAY=:0
 
-export GNUSTEP_MAKEFILES=/usr/local/GNUstep/System/Library/Makefiles
-#. /usr/local/GNUstep/System/Library/Makefiles/GNUstep.sh
+# export GNUSTEP_MAKEFILES=/usr/local/GNUstep/System/Library/Makefiles
+. /usr/local/GNUstep/System/Library/Makefiles/GNUstep.sh
 
 defaults write NSGlobalDomain GSTheme Rik
 
