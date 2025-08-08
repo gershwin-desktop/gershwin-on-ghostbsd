@@ -1,26 +1,21 @@
 #!/bin/sh
 export DISPLAY=:0
 
-# export GNUSTEP_MAKEFILES=/usr/local/GNUstep/System/Library/Makefiles
 . /usr/local/GNUstep/System/Library/Makefiles/GNUstep.sh
 
 defaults write NSGlobalDomain GSTheme Rik
 
+export EDITOR=nano
 export CC=clang19
-export SUDO_ASKPASS=/System/Library/Tools/SudoAskPass
-/System/Library/Tools/globalshortcutsd &
+export SUDO_ASKPASS=$(which SudoAskPass)
+export NO_AT_BRIDGE=1
+
+globalshortcutsd &
 
 # Start D-Bus session if not already running
 if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
     eval "$(dbus-launch --sh-syntax --exit-with-x11)"
 fi
-
-# sudo service dbus stop
-
-#/home/User/gershwin-prefpanes/minibus/obj/minibus --debug 2>&1 >/tmp/minibus.log &
-#export DBUS_SESSION_BUS_ADDRESS="unix:path=/tmp/minibus-socket"
-
-export NO_AT_BRIDGE=1
 
 # Launch window manager and panel in background
 xfwm4 &
@@ -43,10 +38,10 @@ sudo /usr/local/bin/networkmgr &
 # Start Update station stray for update notifications
 sudo update-station &
 
-xterm &
+# xterm &
 
 # Optional: small delay to allow environment to settle
-sleep 2
+# sleep 2
 
 # Launch GWorkspace
 openapp GWorkspace

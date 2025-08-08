@@ -1,6 +1,4 @@
 freefont-ttf
-gofont-ttf
-slim
 xterm
 nano
 gershwin-desktop
@@ -10,3 +8,4 @@ gershwin-globalshortcuts
 gershwin-globalshortcutsd
 gershwin-loginwindow
 gershwin-startupdisk
+xkill

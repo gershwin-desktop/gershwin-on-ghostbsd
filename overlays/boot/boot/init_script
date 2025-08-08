@@ -67,8 +67,6 @@ set -x
 # kldload /boot/kernel/tmpfs.ko # TODO: must not be gzipped so that this works here?
 mount -t tmpfs tmpfs /tmp
 chmod 1777 /tmp # TODO: Check if really needed by FreeBSD 13
-mount -t tmpfs tmpfs /compat
-chmod 1777 /compat # TODO: Check if really needed by FreeBSD 13
 
 mdconfig -a -t vnode -o readonly -f /boot/rootfs.uzip
 
@@ -96,11 +94,15 @@ kldload /media/.uzip/boot/kernel/unionfs.ko
 
 mount -t tmpfs tmpfs /root # Does slim need this?
 
-mount -t tmpfs tmpfs /compat # In case the user wants to install something there in Live mode
+mount -t tmpfs tmpfs /compat
+chmod 1777 /compat # TODO: Check if really needed by FreeBSD 13
+mkdir -p /compat/linux/proc
+mkdir -p /compat/linux/sys
 
 mount -t tmpfs tmpfs /var
 cp -R /media/.uzip/var/ /var
 mkdir -p /var/run # Needed for slim?
+
 # mount -t unionfs -o below /media/.uzip/var /var # TODO: Check: Crashes later on when slim starts? 
 
 # The following does not instantly crash but later in the boot we get a crash

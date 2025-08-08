@@ -167,7 +167,6 @@ packages_software()
   pkg -c ${release} set -y -v 1 ${vital_de_packages}  ${vital_common_packages}
   pkg -c ${release} info -a -s | sort -k2 -hr | head -50
   mkdir -p ${release}/proc
-  mkdir -p ${release}/compat/linux/proc
   rm ${release}/etc/resolv.conf
   umount ${release}/var/cache/pkg
 }
@@ -181,8 +180,8 @@ fetch_x_drivers_packages()
   fi
   mkdir -p ${release}/xdrivers
   yes | pkg -R "${cwd}/pkg/" update
-  echo """$(pkg -R "${cwd}/pkg/" rquery -x -r ${PKG_CONF} '%n %n-%v.pkg' 'nvidia-driver' | grep -v libva)""" > ${release}/xdrivers/drivers-list
-  pkg_list="""$(pkg -R "${cwd}/pkg/" rquery -x -r ${PKG_CONF} '%n-%v.pkg' 'nvidia-driver' | grep -v libva)"""
+  echo """$(pkg -R "${cwd}/pkg/" rquery -x -r ${PKG_CONF} '%n %n-%v.pkg' 'xlibre-nvidia-driver' | grep -v libva)""" > ${release}/xdrivers/drivers-list
+  pkg_list="""$(pkg -R "${cwd}/pkg/" rquery -x -r ${PKG_CONF} '%n-%v.pkg' 'xlibre-nvidia-driver' | grep -v libva)"""
   for line in $pkg_list ; do
     fetch -o ${release}/xdrivers "${pkg_url}/All/$line"
   done
@@ -211,24 +210,22 @@ rc()
   chroot ${release} sysrc clear_tmp_enable="YES"
 
   if [ "${desktop}" == "gershwin" ] ; then
+    # TODO: Move to desktop_config/gershwin.sh
     chroot ${release} sysrc slim_enable="NO"
     chroot ${release} sysrc loginwindow_enable="YES"
+    chroot ${release} sysrc firewall_enable="NO"
   fi
 }
 
 ghostbsd_config()
 {
   # echo "gop set 0" >> ${release}/boot/loader.rc.local
-  mkdir -p ${release}/usr/local/share/ghostbsd
-  echo "${desktop}" > ${release}/usr/local/share/ghostbsd/desktop
-  # Mkdir for linux compat to ensure /etc/fstab can mount when booting LiveCD
-  chroot ${release} mkdir -p /compat/linux/dev/shm
-  chroot ${release} mkdir -p /compat/linux/proc
-  chroot ${release} mkdir -p /compat/linux/sys
+  mkdir -p "${release}"/usr/local/share/ghostbsd
+  echo "${desktop}" > "${release}"/usr/local/share/ghostbsd/desktop
   # Add /boot/entropy file
-  chroot ${release} touch /boot/entropy
+  touch "${release}"/boot/entropy
   # default GhostBSD to local time instead of UTC
-  chroot ${release} touch /etc/wall_cmos_clock
+  touch "${release}"/etc/wall_cmos_clock
 }
 
 desktop_config()
@@ -247,9 +244,7 @@ downsize()
   mkdir -p "${release}/usr/local/llvm19/lib/"
   mv "${release}/tmp/"libLLVM*.so* "${release}/usr/local/llvm19/lib/"
   # TODO: Mark llvm9 package as uninstalled so that it gets installed if the user insatlls something that needs it
-
-  # Replace identical files with symlinks in rescue
-  fdupes -r -S "${cd_root}/rescue"
+  # /var/db/pkg/repos/ contains the database of the installed packages
 }
 
 uzip() 
@@ -266,8 +261,7 @@ uzip()
   ( cd "${release}" ; makefs -b 75% -f 75% -R 262144 "${cd_root}/rootfs.ufs" . )
   ls -lh "${cd_root}/rootfs.ufs"
   mkdir -p "${cd_root}/boot/"
-  mkuzip -o "${cd_root}/boot/rootfs.uzip" "${cd_root}/rootfs.ufs"
-
+  mkuzip -A zstd -C 12 -d -o "${cd_root}/boot/rootfs.uzip" "${cd_root}/rootfs.ufs"
   rm -f "${cd_root}/rootfs.ufs"
   ls -lh "${cd_root}/boot/rootfs.uzip"
 }
@@ -299,6 +293,10 @@ boot()
   find "${cd_root}"/boot/kernel -type f -name '*.ko' -delete
   cp "${release}"/etc/login.conf  "${cd_root}"/etc/ # Workaround for: init: login_getclass: unknown class 'daemon'
   tar -cf - rescue | tar -xf - -C "${cd_root}" # /rescue is full of hardlinks
+  # Replace identical files with symlinks in rescue
+  fdupes -r -S -N "${cd_root}/rescue" || true # -N means do not prompt for confirmation
+  ls -lh "${cd_root}/rescue"
+
   # Must not try to load tmpfs module in FreeBSD 13 and later, 
   # because it will prevent the one in the kernel from working
   sed -i '' -e 's|^tmpfs_load|# load_tmpfs_load|g' "${cd_root}"/boot/loader.conf
@@ -354,7 +352,7 @@ downsize
 uzip
 boot
 image
-if [ -n "$CIRRUS_CI" ] ; then
+if [ -n "${CIRRUS_CI:-}" ] ; then
   # On Cirrus CI we want to upload to GitHub Releases which has a 2 GB file size limit,
   # hence we need to split the ISO there if it is too large
   split
