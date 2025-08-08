@@ -150,7 +150,7 @@ packages_software()
   # cp pkg/XLibre.conf ${release}/usr/local/etc/pkg/repos/XLibre.conf
   cp pkg/XLibre.conf ${release}/etc/pkg/
   cp pkg/Gershwin.conf ${release}/etc/pkg/
-  cp pkg/Gershwin-probonopd.conf ${release}/etc/pkg/
+  cp pkg/Gershwin-components.conf ${release}/etc/pkg/
   cp /etc/resolv.conf ${release}/etc/resolv.conf
   mkdir -p ${release}/var/cache/pkg
   mount_nullfs ${packages_storage} ${release}/var/cache/pkg
@@ -320,6 +320,8 @@ image()
   sha256 "$(echo "${iso_path}" | cut -d / -f6)" > "${iso}/${shafile}"
   transmission-create -o "${iso}/${torrent}" -t ${tracker1} -t ${tracker2} -t ${tracker3} "${iso_path}" || true # Exit status: 127
   chmod 644 "${iso}/${torrent}" || true
+  zsyncmake "${iso_path}" || true
+  chmod 644 "${iso_path}.zsync" || true
   cd -
 }
 

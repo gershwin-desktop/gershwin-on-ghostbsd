@@ -39,7 +39,7 @@ task:
     - kldload nullfs.ko || true
     - kldload geom_uzip.ko || true
     # As of FreeBSD 13.1, sha is in base and the sha package is no longer built
-    - pkg install -y pkg git-lite zsync wget bash zip devel/py-xdg librsvg2 ca_root_nss transmission-cli fdupes # qemu-devel uefi-edk2-qemu-x86_64
+    - pkg install -y pkg git-lite zsync wget bash zip devel/py-xdg librsvg2 ca_root_nss transmission-cli fdupes zsync # qemu-devel uefi-edk2-qemu-x86_64
     - mkdir -p /usr/local/ghostbsd-build/uzip /usr/local/ghostbsd-build/cdroot/
     - mount -t tmpfs tmpfs /usr/local/ghostbsd-build/uzip
     - mount -t tmpfs tmpfs /usr/local/ghostbsd-build/cdroot/
