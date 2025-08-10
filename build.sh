@@ -208,6 +208,12 @@ rc()
   chroot ${release} sysrc ntpd_enable="YES"
   chroot ${release} sysrc ntpd_sync_on_start="YES"
   chroot ${release} sysrc clear_tmp_enable="YES"
+  chroot ${release} sysrc dsbdriverd_enable="YES"
+  chroot ${release} sysrc devfs_system_ruleset="system"
+  chroot ${release} sysrc initgfx_enable="YES"
+  chroot ${release} sysrc initgfx_menu="NO"
+  chroot ${release} sysrc smartd_enable="YES"
+  chroot ${release} sysrc dsbdriverd_enable="YES"
 
   if [ "${desktop}" == "gershwin" ] ; then
     # TODO: Move to desktop_config/gershwin.sh
