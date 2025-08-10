@@ -302,6 +302,9 @@ boot()
   sed -i '' -e 's|^tmpfs_load|# load_tmpfs_load|g' "${cd_root}"/boot/loader.conf
   rm "${cd_root}"/boot/kernel/tmpfs.ko*
   cd -
+
+  # https://github.com/freebsd/freebsd-src/blob/5bffa1d2069a05c8346eb34e17a39085fe0bf09b/sbin/init/init.c#L1061
+  chmod 755 "${cd_root}/boot/init_script"
 }
 
 image()
