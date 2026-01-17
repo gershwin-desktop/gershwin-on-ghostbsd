@@ -24,7 +24,7 @@ install_system()
   tar -xJf system.txz -C "${release}"/
   # Install and enable loginwindow service
   u="https://raw.githubusercontent.com/gershwin-desktop/gershwin-components/refs/heads/main/LoginWindow/loginwindow"
-  curl -sSf "$u" -o "${release}"/usr/loal/etc/rc.d/loginwindow
+  curl -sSf "$u" -o "${release}"/usr/local/etc/rc.d/loginwindow
   chmod +x "${release}"/usr/loal/etc/rc.d/loginwindow
   chroot "${release}" service loginwindow enable
 }
