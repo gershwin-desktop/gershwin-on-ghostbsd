@@ -6,3 +6,9 @@ ghostbsd-mate
 ghostbsd-utils
 plank
 station-tweak
+ghostbsd-utils
+gnome-keyring
+nss_mdns
+pkg
+slick-greeter
+webrtc-audio-processing
