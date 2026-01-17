@@ -50,6 +50,4 @@ community_setup_liveuser()
 community_setup_liveuser_gershwin()
 {
   set_user_gershwin
-  chroot "${release}" su - "${live_user}" -c "xdg-user-dirs-update"
-  chroot "${release}" su - "${live_user}" -c "ln -sf /System/Applications/Installer.app \"/Users/${live_user}/Desktop/Installer.app\""
 }
