@@ -1,4 +1,5 @@
 xterm
 nano
 xkill
-gershwin-initgfx
+automount
+fusefs-sshfs
