@@ -146,11 +146,7 @@ packages_software()
   if [ "${build_type}" = "unstable" ] ; then
     cp pkg/GhostBSD_Unstable.conf ${release}/etc/pkg/GhostBSD.conf
   fi
-  # mkdir -p ${release}/usr/local/etc/pkg/repos
-  # cp pkg/XLibre.conf ${release}/usr/local/etc/pkg/repos/XLibre.conf
-  cp pkg/XLibre.conf ${release}/etc/pkg/
-  cp pkg/Gershwin.conf ${release}/etc/pkg/
-  cp pkg/Gershwin-components.conf ${release}/etc/pkg/
+  # cp pkg/Gershwin.conf ${release}/etc/pkg/
   cp /etc/resolv.conf ${release}/etc/resolv.conf
   mkdir -p ${release}/var/cache/pkg
   mount_nullfs ${packages_storage} ${release}/var/cache/pkg
@@ -160,7 +156,7 @@ packages_software()
   drivers_packages="$(cat "${cwd}/packages/drivers")"
   vital_de_packages="$(cat "${cwd}/packages/vital/${desktop}")"
   vital_common_packages="$(cat "${cwd}/packages/vital/common")"
-  pkg -c ${release} install -y xlibre-server xlibre-drivers
+  # pkg -c ${release} install -y xorg-server xorg-drivers
   # shellcheck disable=SC2086
   pkg -c ${release} install -y ${de_packages} ${common_packages} ${drivers_packages}
   # shellcheck disable=SC2086
