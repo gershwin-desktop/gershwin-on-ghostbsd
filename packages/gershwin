@@ -3,3 +3,6 @@ nano
 xkill
 automount
 fusefs-sshfs
+icu
+giflib
+curl
