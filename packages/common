@@ -17,7 +17,7 @@ slick-greeter
 unzip
 webrtc-audio-processing
 xconfig
-xlibre-drivers
-xlibre-server
+xorg-drivers
+xorg-server
 zip
 zsh
