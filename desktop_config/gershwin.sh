@@ -26,12 +26,12 @@ install_system()
   u="https://raw.githubusercontent.com/gershwin-desktop/gershwin-components/refs/heads/main/LoginWindow/loginwindow"
   curl -sSf "$u" -o "${release}"/usr/local/etc/rc.d/loginwindow
   chmod +x "${release}"/usr/local/etc/rc.d/loginwindow
-  # chroot "${release}" service loginwindow enable
+  chroot "${release}" service loginwindow enable
 }
 
 patch_etc_files
 community_setup_liveuser_gershwin
 community_setup_autologin_gershwin
-setup_xinit
+# setup_xinit
 install_system
 final_setup
