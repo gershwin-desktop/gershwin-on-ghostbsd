@@ -21,6 +21,7 @@ icu
 jbigkit
 jpeg-turbo
 lerc
+libbfd
 libICE
 libSM
 libX11
