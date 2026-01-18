@@ -17,7 +17,7 @@ setup_xinit()
 build_system()
 {
   # Build literally as per the instructions in gershwin-build
-  chroot "${release}"/root pkg install git 
+  chroot "${release}"/root pkg install -y git 
   chroot "${release}"/root git clone https://github.com/gershwin-desktop/gershwin-build.git && cd gershwin-build
   chroot "${release}"/root ./bootstrap.sh
   chroot "${release}"/root ./checkout.sh
