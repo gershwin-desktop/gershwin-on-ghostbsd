@@ -17,9 +17,7 @@ setup_xinit()
 install_system()
 {
   # Hack for running on GhostBSD
-  ln -s "${release}"/usr/local/lib/libbfd-2.*.so "${release}"/usr/local/lib/libbfd-2.44.so || true
-  # Make binaries from FreeBSD 14 usable on FreeBSD 15
-  [ -e "${release}"/lib/libutil.so.9 ] || [ ! -e "${release}"/lib/libutil.so.10 ] || ln -s "${release}"libutil.so.10 "${release}"/lib/libutil.so.9
+  ( cd "${release}"/usr/local/lib/ && ln -s libbfd-2.*.so libbfd-2.44.so || true )
   # Install /System (built in gershwin-build repository)
   u="https://api.cirrus-ci.com/v1/artifact/github/gershwin-desktop/gershwin-build/data/system/artifacts/FreeBSD/14/amd64/system.txz"
   curl -sSf "$u" -o "$(basename "$u")"
