@@ -4,6 +4,7 @@ xkill
 automount
 fusefs-sshfs
 avahi-app
+binutils
 brotli
 cairo
 cups
