@@ -86,3 +86,13 @@ EOF
   rm -f "${release}/config.sh"
   rm -rf "${release}/setup-station"
 }
+
+git_build_gershwin-system()
+{
+  # Build literally as per the instructions in gershwin-build
+  git clone https://github.com/gershwin-desktop/gershwin-build
+  ( cd gershwin-build && ./checkout.sh )
+  mkdir -p "${release}/root/"
+  cp -R ./gershwin-build "${release}/root/gershwin-build"
+  chroot "${release}"/root/gershwin-build make install
+}
