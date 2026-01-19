@@ -14,16 +14,6 @@ setup_xinit()
   echo "exec /usr/local/bin/gershwin-x11" > "${release}/usr/share/skel/dot.xinitrc"
 }
 
-build_system()
-{
-  # Build literally as per the instructions in gershwin-build
-  chroot "${release}"/root pkg install -y git 
-  chroot "${release}"/root git clone https://github.com/gershwin-desktop/gershwin-build.git && cd gershwin-build
-  chroot "${release}"/root ./bootstrap.sh
-  chroot "${release}"/root ./checkout.sh
-  chroot "${release}"/root make install
-}
-
 install_system()
 {
   # Use precompiled binaries from gershwin-build. NOTE: These can have binary incompatibilities
@@ -44,5 +34,6 @@ patch_etc_files
 community_setup_liveuser_gershwin
 community_setup_autologin_gershwin
 # setup_xinit
-build_system
+# install_system
+git_build_gershwin-system
 final_setup
