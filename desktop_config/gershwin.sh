@@ -6,6 +6,7 @@ set -e -u -x
 . "${cwd}/common_config/base-setting.sh"
 . "${cwd}/common_config/finalize.sh"
 . "${cwd}/common_config/setuser.sh"
+. "${cwd}/common_config/gitpkg.sh"
 
 setup_xinit()
 {
