@@ -96,4 +96,6 @@ squashfs-tools-ng
 autoconf
 automake
 libtool
-GhostBSD*-dev
+GhostBSD-clang
+GhostBSD-utilities
+gmake
