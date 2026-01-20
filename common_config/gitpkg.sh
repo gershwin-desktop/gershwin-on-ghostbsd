@@ -94,5 +94,5 @@ git_build_gershwin-system()
   ( cd gershwin-build && ./checkout.sh )
   mkdir -p "${release}/root/"
   cp -R ./gershwin-build "${release}/root/gershwin-build"
-  chroot "${release}"/root/gershwin-build make install
+  chroot "${release}"/root/gershwin-build /usr/bin/make install
 }
