@@ -94,5 +94,8 @@ git_build_gershwin-system()
   ( cd gershwin-build && ./checkout.sh )
   mkdir -p "${release}/root/"
   cp -R ./gershwin-build "${release}/root/gershwin-build"
+  # Ensure DNS works inside chroot for cmake FetchContent
+  cp /etc/resolv.conf "${release}/etc/resolv.conf"
   chroot "${release}" sh -c "cd /root/gershwin-build && gmake install"
+  rm -f "${release}/etc/resolv.conf"
 }
