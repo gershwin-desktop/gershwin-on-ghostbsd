@@ -116,7 +116,14 @@ base()
   else
     base_list="$(cat "${cwd}/packages/base")"
     vital_base="$(cat "${cwd}/packages/vital/base")"
+    if [ "${desktop}" = "gershwin" ] ; then
+      base_devel="$(cat "${cwd}/packages/base-devel")"
+      base_list="${base_list} ${base_devel}"
+      vital_base_devel="$(cat "${cwd}/packages/vital/base-devel")"
+      vital_base="${vital_base} ${vital_base_devel}"
+    fi
   fi
+
   mkdir -p ${release}/etc
   cp /etc/resolv.conf ${release}/etc/resolv.conf
   mkdir -p ${release}/var/cache/pkg
