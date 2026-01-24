@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (c) 2020-2023, Simon Peter <probono@puredarwin.org>
+# Copyright (c) 2020-2026, Simon Peter <probono@puredarwin.org>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -131,7 +131,7 @@ mount -t tmpfs tmpfs /home
 mkdir -p /home/liveuser/Desktop
 pw useradd liveuser -u 1000 \
 -c "Live User" -d "/home/liveuser" \
--g wheel -G operator -m -s /usr/local/bin/zsh -k /usr/share/skel -w none
+-g wheel -G operator -m -s /bin/sh -k /usr/share/skel -w none
 chown -R liveuser /home/liveuser
 pw groupmod wheel -m liveuser
 pw groupmod video -m liveuser
