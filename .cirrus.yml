@@ -6,7 +6,7 @@ task:
     platform: freebsd
     disk: 100 # Gb
     matrix:
-      - image: freebsd-14-3-release-amd64-ufs
+      - image: freebsd-15-0-release-amd64-ufs
 
   env:
     CIRRUS_CLONE_DEPTH: 1
