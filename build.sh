@@ -110,32 +110,21 @@ workspace()
 
 base()
 {
-  if [ "${desktop}" = "test" ] ; then
-    base_list="$(cat "${cwd}/packages/test_base")"
-    vital_base="$(cat "${cwd}/packages/vital/test_base")"
-  else
-    base_list="$(cat "${cwd}/packages/base")"
-    vital_base="$(cat "${cwd}/packages/vital/base")"
-    if [ "${desktop}" = "gershwin" ] ; then
-      base_devel="$(cat "${cwd}/packages/base-devel")"
-      base_list="${base_list} ${base_devel}"
-      vital_base_devel="$(cat "${cwd}/packages/vital/base-devel")"
-      vital_base="${vital_base} ${vital_base_devel}"
-    fi
-  fi
-
+  log "Installing base system packages..."
+  base_list="$(cat "${cwd}/packages/base")"
+  vital_base="$(cat "${cwd}/packages/vital/base")"
   mkdir -p ${release}/etc
   cp /etc/resolv.conf ${release}/etc/resolv.conf
   mkdir -p ${release}/var/cache/pkg
-  ## mount_nullfs ${packages_storage} ${release}/var/cache/pkg
+  mount_nullfs ${packages_storage} ${release}/var/cache/pkg
   # shellcheck disable=SC2086
   pkg -r ${release} -R "${cwd}/pkg/" install -y -r ${PKG_CONF}_base ${base_list}
   # shellcheck disable=SC2086
   pkg -r ${release} -R "${cwd}/pkg/" set -y -v 1 ${vital_base}
   rm ${release}/etc/resolv.conf
-  ## umount ${release}/var/cache/pkg
+  umount ${release}/var/cache/pkg
   touch ${release}/etc/fstab
-  mkdir -p ${release}/cdrom
+  mkdir -p ${release}/cdrom ${release}/mnt ${release}/media
 }
 
 set_ghostbsd_version()
