@@ -1,71 +1,36 @@
-ghostbsd-build <br> [![GitHub release (latest by date)](https://img.shields.io/github/v/release/probonopd/ghostbsd-build)](../../releases/latest) [![GitHub all releases](https://img.shields.io/github/downloads/probonopd/ghostbsd-build/total)](../../releases) [![GitHub release (latest by date)](https://img.shields.io/github/downloads/probonopd/ghostbsd-build/latest/total)](../../releases/latest) [![Build Status](https://api.cirrus-ci.com/github/probonopd/ghostbsd-build.svg)](https://cirrus-ci.com/github/probonopd/ghostbsd-build)
-==============
-Live media creator for GhostBSD distribution
+# Gershwin-on-GhostBSD
 
-## Introduction
-The purpose of this tool is to quickly generate live images for GhostBSD.
+Build system for generating Gershwin Desktop live media based on GhostBSD.
 
-## Features
-* Build GhostBSD from packages
-* Mate and XFCE desktop environments
-* Hybrid DVD/USB image
+## Architecture
 
-## Graphics support
-* Compatible with VirtualBox, VMware, NVIDIA graphics out of box
-* SCFB support with automatic best resolution for UEFI enabled systems with Intel/AMD graphics
+- `build.sh`: The main build orchestrator.
+- `resources/`:
+  - `config/`: System configuration templates and package repository configs.
+  - `packages/`: Clean package lists for base system, drivers, and Gershwin.
+  - `scripts/`: Low-level ISO generation scripts.
+  - `overlays/`: Files injected into the live system and boot environment.
 
-## System requirements
-* Latest version of GhostBSD 
-* 20GB of free disk space
-* 4GB of free memory
+## Requirements
 
-Note: GhostBSD 22.01.12 and later should be used to build ISO.
+- A FreeBSD or GhostBSD host system.
+- Superuser privileges (root).
+- At least 20GB of free disk space and 4GB of RAM.
 
-## Initial setup
-Install the required packages:
-```
-pkg install git transmission-utils rsync
-```
-Make sure to have linux64 kernel module loaded
-```
-kldload linux64
-sysrc -f /etc/rc.conf kld_list="linux64"
-```
-Clone the repo:
-```
-git clone https://www.github.com/ghostbsd/ghostbsd-build.git
-```
-## Starting a build
-#### Enter the directory for running the LiveCD build script:
-```
-cd ghostbsd-build
-```
+## Getting Started
 
-#### To build a GhostBSD with __MATE__ as default desktop
-```
-./build.sh -d mate -b unstable
-```
-or
-```
-./build.sh -d mate -b release
-```
+1. **Install Build Dependencies:**
+   ```bash
+   pkg install git transmission-utils makefs
+   ```
 
-#### (Option) To build GhostBSD with __XFCE__ as default desktop
-```
-./build.sh -d xfce -b unstable
-```   
+2. **Run the Build:**
+   ```bash
+   sudo ./build.sh
+   ```
 
-#### (Option) To build GhostBSD with __Gershwin__ as default desktop
-```
-./build.sh -d gershwin -b unstable
-```   
+The resulting ISO and its SHA256 checksum will be located in `/usr/local/gershwin-build/iso/`.
 
-## Burn an image to cd:
-```
-cdrecord /usr/local/ghostbsd-build/iso/GhostBSD-22.01.12.iso
-```
+## Live Environment
 
-## Write an image to usb stick:
-```
-dd if=/usr/local/ghostbsd-build/iso/GhostBSD-22.01.12.iso of=/dev/da0 bs=4m
-```
+The live system uses a memory-efficient `uzip` and `nullfs` layering architecture. The default user is `ghostbsd` with UID `1100`, configured for automatic login into the Gershwin Desktop environment.

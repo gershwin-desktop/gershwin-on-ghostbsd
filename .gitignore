@@ -2,3 +2,5 @@ custom
 efi
 .idea
 *.zsync
+build_log*
+*.pid

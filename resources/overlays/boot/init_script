@@ -1,0 +1,57 @@
+#!/rescue/sh
+# --- Gershwin Live System Init Script ---
+# This script handles the early initialization of the live environment.
+
+set -x
+
+# 1. Mount temporary filesystems and initialize directories
+mount -t tmpfs tmpfs /tmp
+chmod 1777 /tmp
+mount -t tmpfs tmpfs /media
+chmod 1777 /media
+
+# 2. Mount the compressed root filesystem (uzip)
+# The rootfs.uzip contains the main /usr, /System, /Applications, etc.
+mdconfig -a -t vnode -o readonly -f /boot/rootfs.uzip
+mkdir -p /media/.uzip
+mount -t ufs -o ro /dev/md0.uzip /media/.uzip
+
+# 3. Load required kernel modules if not already loaded
+[ ! -f /boot/kernel/nullfs.ko ] && kldload /media/.uzip/boot/kernel/nullfs.ko
+[ ! -f /boot/kernel/unionfs.ko ] && kldload /media/.uzip/boot/kernel/unionfs.ko
+
+# 4. Layer the system using nullfs
+# This provides a read-only view of the compressed filesystem
+for dir in System Applications bin lib libexec sbin usr boot; do
+    mkdir -p "/${dir}"
+    mount -t nullfs "/media/.uzip/${dir}" "/${dir}"
+done
+
+# 5. Set up writable overlays and runtime directories
+mount -t tmpfs tmpfs /nvidia # Required for hardware drivers
+mount -t tmpfs tmpfs /root
+mount -t tmpfs tmpfs /var
+cp -R /media/.uzip/var/ /var
+mkdir -p /var/run /var/db/pkg
+
+# 6. Set up Gershwin User Environment
+mount -t tmpfs tmpfs /Users
+mkdir -p /Users/ghostbsd/Desktop
+# Note: ghostbsd user (UID 1100) is used for consistency with GhostBSD base
+pw useradd ghostbsd -u 1100 -c "Gershwin Live User" -d "/Users/ghostbsd" \
+    -g wheel -G operator -m -s /bin/sh -k /usr/share/skel -w none
+chown -R 1100:wheel /Users/ghostbsd
+
+# 7. Configure /etc with a writable layer
+mkdir -p /tmp/etc
+cp -R /media/.uzip/etc/ /tmp/etc/
+mount -t tmpfs tmpfs /etc
+mount -t nullfs /tmp/etc /etc
+
+# 8. Final system tweaks
+hostname "gershwin"
+conscontrol mute on >/dev/null 2>&1
+export TERM=xterm
+clear > /dev/console
+
+exit 0
