@@ -87,9 +87,7 @@ xcb-util-renderutil
 xcb-util-wm
 xconfig
 xkill
-xorg-drivers
-xorg-fonts-truetype
-xorg-server
+xlibre-minimal
 xrandr
 xterm
 zip
