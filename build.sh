@@ -352,26 +352,43 @@ downsize_system() {
 
 prepare_boot_env() {
     log "Preparing boot environment..."
+    cd "${release}" && tar -cf - boot | tar -xf - -C "${CD_ROOT}"
+    mkdir -p "${CD_ROOT}"/bin/ "${CD_ROOT}"/dev "${CD_ROOT}"/etc # TODO: Create all the others here as well instead of keeping them in overlays/boot
+    cp "${release}"/COPYRIGHT "${CD_ROOT}"/
+    chmod +x "${cwd}/overlays/boot/boot/init_script"
+    cp -R "${cwd}/overlays/boot/" "${CD_ROOT}"
+    cat "${CD_ROOT}"/boot/loader.conf
+    # Remove all modules from the ISO that are not required before the root filesystem is mounted
+    # The whole directory /boot/modules is unnecessary
+    rm -rf "${CD_ROOT}"/boot/modules/*
+    # Remove modules in /boot/kernel that are not loaded at boot time
+    find "${CD_ROOT}"/boot/kernel -name '*.ko' \
+    -not -name 'cryptodev.ko' \
+    -not -name 'firewire.ko' \
+    -not -name 'geom_uzip.ko' \
+    -not -name 'tmpfs.ko' \
+    -not -name 'xz.ko' \
+    -delete
+    # Compress the kernel
+    gzip -f "${CD_ROOT}"/boot/kernel/kernel || true
+    rm "${CD_ROOT}"/boot/kernel/kernel || true
+    # Compress the modules in a way the kernel understands
+    find "${CD_ROOT}"/boot/kernel -type f -name '*.ko' -exec gzip -f {} \;
+    find "${CD_ROOT}"/boot/kernel -type f -name '*.ko' -delete
+    cp "${release}"/etc/login.conf  "${CD_ROOT}"/etc/ # Workaround for: init: login_getclass: unknown class 'daemon'
+    tar -cf - rescue | tar -xf - -C "${CD_ROOT}" # /rescue is full of hardlinks
+    # Replace identical files with symlinks in rescue
+    fdupes -r -S -N "${CD_ROOT}/rescue" || true # -N means do not prompt for confirmation
+    ls -lh "${CD_ROOT}/rescue"
     
-    # Copy boot files to CD root
-    cd "${RELEASE_DIR}" && tar -cf - boot | tar -xf - -C "${CD_ROOT}"
+    # Must not try to load tmpfs module in FreeBSD 13 and later, 
+    # because it will prevent the one in the kernel from working
+    sed -i '' -e 's|^tmpfs_load|# load_tmpfs_load|g' "${CD_ROOT}"/boot/loader.conf
+    rm "${CD_ROOT}"/boot/kernel/tmpfs.ko*
     cd -
     
-    # Overlays
-    cp -R "${OVERLAYS_DIR}/" "${CD_ROOT}/"
-    
-    # Cleanup unnecessary boot modules
-    find "${CD_ROOT}/boot/kernel" -name '*.ko' \
-        -not -name 'cryptodev.ko' \
-        -not -name 'firewire.ko' \
-        -not -name 'geom_uzip.ko' \
-        -not -name 'tmpfs.ko' \
-        -not -name 'xz.ko' \
-        -delete
-        
-    # Compress kernel and modules
-    [ -f "${CD_ROOT}/boot/kernel/kernel" ] && gzip -f "${CD_ROOT}/boot/kernel/kernel"
-    find "${CD_ROOT}/boot/kernel" -type f -name '*.ko' -exec gzip -f {} \;
+    # https://github.com/freebsd/freebsd-src/blob/5bffa1d2069a05c8346eb34e17a39085fe0bf09b/sbin/init/init.c#L1061
+    chmod 755 "${CD_ROOT}/boot/init_script"
 }
 
 generate_iso() {
