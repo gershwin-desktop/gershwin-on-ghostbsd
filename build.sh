@@ -122,6 +122,9 @@ base()
   cp /etc/resolv.conf ${release}/etc/resolv.conf
   mkdir -p ${release}/var/cache/pkg
   mount_nullfs ${packages_storage} ${release}/var/cache/pkg
+  # Clean pkg cache to free up disk space and ignore OS version mismatch
+  pkg -r ${release} -R "${cwd}/pkg/" clean -a -y || true
+  export IGNORE_OSVERSION=yes
   # shellcheck disable=SC2086
   pkg -r ${release} -R "${cwd}/pkg/" install -y -r ${PKG_CONF}_base ${base_list}
   # shellcheck disable=SC2086
@@ -152,6 +155,8 @@ packages_software()
   mkdir -p ${release}/var/cache/pkg
   mount_nullfs ${packages_storage} ${release}/var/cache/pkg
   mount -t devfs devfs ${release}/dev
+  # Clean pkg cache to free up disk space
+  pkg -c ${release} clean -a -y || true
   de_packages="$(cat "${cwd}/packages/${desktop}")"
   common_packages="$(cat "${cwd}/packages/common")"
   drivers_packages="$(cat "${cwd}/packages/drivers")"
