@@ -10,7 +10,8 @@ task:
 
   env:
     CIRRUS_CLONE_DEPTH: 1
-    GITHUB_TOKEN: ENCRYPTED[79d8815d823c21d974e3e5d6a94f2048ab3f2a6938125a80373d5d3478f5044e5e21a1741537ba39f2f916270e010a4a]
+    # https://cirrus-ci.com/settings/github/gershwin-desktop
+    GITHUB_TOKEN: ENCRYPTED[!c08bdaf69be33f41790a5e0fd26fa4efe4358c9caac2c5f2357150e079c6a0264d5b6fa576c0193bd8bcb993a4ca926e!]
 
   ghostbsd-build_cache:
     folder: /usr/local/ghostbsd-build/amd64/cache/
