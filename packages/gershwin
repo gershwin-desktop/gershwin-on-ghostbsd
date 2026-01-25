@@ -98,3 +98,10 @@ libtool
 GhostBSD-clang
 GhostBSD-utilities
 gmake
+cmake-core
+openssl
+freeglut
+libao
+xorg-fonts-truetype
+libvncserver
+freerdp
