@@ -181,7 +181,8 @@ fetch_x_drivers_packages()
     pkg_url=$(pkg -R pkg/ -vv | grep '/unstable.*/latest' | cut -d '"' -f2)
   fi
   mkdir ${release}/xdrivers
-  yes | pkg -R "${cwd}/pkg/" update
+  # Disabled: pkg update not needed since driver fetching is commented out
+  #yes | pkg -R "${cwd}/pkg/" update
   #echo """$(pkg -R "${cwd}/pkg/" rquery -x -r ${PKG_CONF} '%n %n-%v.pkg' 'nvidia-driver' | grep -v xlibre | grep -v libva)""" > ${release}/xdrivers/drivers-list
   #pkg_list="""$(pkg -R "${cwd}/pkg/" rquery -x -r ${PKG_CONF} '%n-%v.pkg' 'nvidia-driver' | grep -v xlibre | grep -v libva)"""
   #for line in $pkg_list ; do
