@@ -12,12 +12,19 @@
 set -e -u
 
 # --- Configuration ---
-LABEL="GERSHWIN"
-WORKDIR="/usr/local/ghostbsd-build"
+LABEL="GHOSTBSD"
+IMAGE_NAME_PREFIX="gershwin-on-ghostbsd"
+WORKDIR="/usr/local/gershwin-build"
 
 # Target Environment (Decoupled from Host)
 TARGET_VERSION="${TARGET_VERSION:-14}"
 TARGET_ARCH="${TARGET_ARCH:-amd64}"
+# Map TARGET_ARCH to filename-friendly architecture string
+case "${TARGET_ARCH}" in
+    amd64) ARCH_STR="x86_64" ;;
+    aarch64) ARCH_STR="aarch64" ;;
+    *) ARCH_STR="${TARGET_ARCH}" ;;
+esac
 TARGET_ABI="FreeBSD:${TARGET_VERSION}:${TARGET_ARCH}"
 # Branch and OSVERSION mapping
 case "${TARGET_VERSION}" in
@@ -375,7 +382,7 @@ generate_iso() {
     rm -f "${CD_ROOT}/rootfs.ufs"
 
     log "Generating final ISO image..."
-    ISO_PATH="${ISO_DIR}/${LABEL}-$(date +%Y%m%d).iso"
+    ISO_PATH="${ISO_DIR}/${IMAGE_NAME_PREFIX}-$(date +%Y%m%d%H%M%S)-${ARCH_STR}.iso"
 
     # Canonical path: run the upstream mkisoimages.sh from its directory so it can
     # reliably source install-boot.sh and produce a hybrid EFI/BIOS image.
@@ -395,6 +402,21 @@ generate_iso() {
     fi
 }
 
+split()
+{
+  # units -o "%0.f" -t "2 gigabytes" "bytes"
+  THRESHOLD_BYTES=2147483647
+  # THRESHOLD_BYTES=1999999999
+  ISO_SIZE=$(stat -f%z "${ISO_PATH}")
+  if [ $ISO_SIZE -gt $THRESHOLD_BYTES ] ; then
+    echo "Size exceeds GitHub Releases file size limit; splitting the ISO"
+    sudo split -d -b "$THRESHOLD_BYTES" -a 1 "${ISO_PATH}" "${ISO_PATH}.part"
+    echo "Split the ISO, deleting the original"
+    rm "${ISO_PATH}"
+    ls -l "${ISO_PATH}"*
+  fi
+}
+
 # --- Main Execution ---
 log_env
 setup_workspace
@@ -405,5 +427,10 @@ build_gershwin_components
 downsize_system
 prepare_boot_env
 generate_iso
+if [ -n "${CIRRUS_CI:-}" ] ; then
+  # On Cirrus CI we want to upload to GitHub Releases which has a 2 GB file size limit,
+  # hence we need to split the ISO there if it is too large
+  split
+fi
 
 log "Build complete!"
