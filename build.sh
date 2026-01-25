@@ -127,6 +127,20 @@ install_base_system() {
     log "Installing base system packages..."
     mkdir -p "${RELEASE_DIR}/etc" "${RELEASE_DIR}/var/cache/pkg" "${RELEASE_DIR}/var/db/pkg"
     cp /etc/resolv.conf "${RELEASE_DIR}/etc/resolv.conf"
+    # Create missing bzip2.pc file required by freetype2
+    mkdir -p "${RELEASE_DIR}/usr/local/libdata/pkgconfig"
+    cat > "${RELEASE_DIR}/usr/local/libdata/pkgconfig/bzip2.pc" << 'EOF'
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: bzip2
+Description: bzip2 compression library
+Version: 1.0.8
+Libs: -L${libdir} -lbz2
+Cflags: -I${includedir}
+EOF
     
     mount_nullfs "${PKGS_STORAGE}" "${RELEASE_DIR}/var/cache/pkg"
     
