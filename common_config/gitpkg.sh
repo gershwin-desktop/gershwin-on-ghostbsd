@@ -96,6 +96,20 @@ git_build_gershwin-system()
   cp -R ./gershwin-build "${release}/root/gershwin-build"
   # Ensure DNS works inside chroot for cmake FetchContent
   cp /etc/resolv.conf "${release}/etc/resolv.conf"
+  # Create missing bzip2.pc file required by freetype2
+  mkdir -p "${release}/usr/local/libdata/pkgconfig"
+  cat > "${release}/usr/local/libdata/pkgconfig/bzip2.pc" << 'EOF'
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: bzip2
+Description: bzip2 compression library
+Version: 1.0.8
+Libs: -L${libdir} -lbz2
+Cflags: -I${includedir}
+EOF
   chroot "${release}" sh -c "cd /root/gershwin-build && gmake install"
   rm -f "${release}/etc/resolv.conf"
 }
