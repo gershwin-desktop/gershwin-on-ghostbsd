@@ -376,20 +376,16 @@ generate_iso() {
 
     log "Generating final ISO image..."
     ISO_PATH="${ISO_DIR}/${LABEL}-$(date +%Y%m%d).iso"
-    
-    # Create EFI boot image if loader.efi exists
-    if [ -f "${RELEASE_DIR}/boot/loader.efi" ]; then
-        mkdir -p "${WORKDIR}/efi/EFI/BOOT"
-        cp "${RELEASE_DIR}/boot/loader.efi" "${WORKDIR}/efi/EFI/BOOT/BOOTX64.EFI"
-        makefs -t msdos -o "fat_type=12,label=EFIBOOT" "${CD_ROOT}/boot/efiboot.img" "${WORKDIR}/efi"
+
+    # Canonical path: run the upstream mkisoimages.sh from its directory so it can
+    # reliably source install-boot.sh and produce a hybrid EFI/BIOS image.
+    if [ ! -f "${CWD}/resources/scripts/mkisoimages.sh" ]; then
+        error "Required script missing: ${CWD}/resources/scripts/mkisoimages.sh"
     fi
-    
-    # Use makefs for ISO creation
-    makefs -t cd9660 \
-        -o "rockridge,label=${LABEL}" \
-        -o "bootimage=i386;${CD_ROOT}/boot/cdboot,no-emul-boot" \
-        -o "bootimage=i386;${CD_ROOT}/boot/efiboot.img,no-emul-boot,platformid=efi" \
-        "${ISO_PATH}" "${CD_ROOT}"
+
+    log "Creating ISO using mkisoimages.sh (canonical single path — EFI and BIOS hybrid)..."
+    ( cd "${CWD}/resources/scripts" && sh ./mkisoimages.sh -b "${LABEL}" "${ISO_PATH}" "${CD_ROOT}" )
+
     
     log "ISO created at: ${ISO_PATH}"
     if command -v sha256 >/dev/null; then
