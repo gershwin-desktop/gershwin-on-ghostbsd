@@ -4,7 +4,6 @@ drm-kmod
 egl-wayland
 realtek-re-kmod
 utouch-kmod
-virtualbox-ose-additions
 wifi-firmware-kmod
 xlibre-xf86-input-evdev
 xlibre-xf86-input-joystick
