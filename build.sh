@@ -13,7 +13,7 @@ set -e -u
 
 # --- Configuration ---
 LABEL="GERSHWIN"
-WORKDIR="/usr/local/gershwin-build"
+WORKDIR="/usr/local/ghostbsd-build"
 
 # Target Environment (Decoupled from Host)
 TARGET_VERSION="${TARGET_VERSION:-14}"
