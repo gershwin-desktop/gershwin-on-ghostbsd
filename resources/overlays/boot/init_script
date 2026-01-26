@@ -80,6 +80,7 @@ mount -t ufs -o ro /dev/md0.uzip /media/.uzip
 
 kldload /media/.uzip/boot/kernel/nullfs.ko
 mount -t nullfs /media/.uzip/System /System
+mount -t tmpfs tmpfs /Local
 mount -t nullfs /media/.uzip/Applications /Applications
 mount -t nullfs /media/.uzip/bin /bin
 mount -t nullfs /media/.uzip/lib /lib
@@ -92,7 +93,7 @@ mount -t nullfs /media/.uzip/boot /boot
 
 kldload /media/.uzip/boot/kernel/unionfs.ko
 
-mount -t tmpfs tmpfs /root # Does slim need this?
+mount -t tmpfs tmpfs /root
 
 mount -t tmpfs tmpfs /compat
 chmod 1777 /compat # TODO: Check if really needed by FreeBSD 13
@@ -101,14 +102,7 @@ mkdir -p /compat/linux/sys
 
 mount -t tmpfs tmpfs /var
 cp -R /media/.uzip/var/ /var
-mkdir -p /var/run # Needed for slim?
-
-# mount -t unionfs -o below /media/.uzip/var /var # TODO: Check: Crashes later on when slim starts? 
-
-# The following does not instantly crash but later in the boot we get a crash
-# TODO: Retest
-# mount -t unionfs -o below /media/.uzip/var /var
-# mkdir -p /var/run
+mkdir -p /var/run # Needed?
 
 # Avoid using '-o below' because it is known to be crashy
 mkdir -p /tmp/usr/local
@@ -118,13 +112,6 @@ mount -t unionfs /tmp/usr/local /usr/local
 cp -R /media/.uzip/etc /tmp
 mount -t tmpfs tmpfs /etc
 mount -t nullfs /tmp/etc /etc
-# cp -R /tmp/etc /etc
-# mv /tmp/etc/* /etc/
-# rm -r /tmp/etc # TODO later
-
-# FIXME: The following also gives instant reboot. Why?
-# mkdir -p /tmp/unionfs/etc
-# mount -o noatime -t unionfs /tmp/unionfs/etc /etc
 
 # Add liveuser, this also creates a writable $HOME from skel
 mount -t tmpfs tmpfs /home
