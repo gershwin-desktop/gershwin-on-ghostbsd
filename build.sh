@@ -352,9 +352,9 @@ downsize_system() {
 
 prepare_boot_env() {
     log "Preparing boot environment..."
-    cd "${release}" && tar -cf - boot | tar -xf - -C "${CD_ROOT}"
+    cd "${RELEASE_DIR}" && tar -cf - boot | tar -xf - -C "${CD_ROOT}"
     mkdir -p "${CD_ROOT}"/bin/ "${CD_ROOT}"/dev "${CD_ROOT}"/etc # TODO: Create all the others here as well instead of keeping them in overlays/boot
-    cp "${release}"/COPYRIGHT "${CD_ROOT}"/
+    cp "${RELEASE_DIR}"/COPYRIGHT "${CD_ROOT}"/
     chmod +x "${cwd}/overlays/boot/boot/init_script"
     cp -R "${cwd}/overlays/boot/" "${CD_ROOT}"
     cat "${CD_ROOT}"/boot/loader.conf
@@ -375,7 +375,7 @@ prepare_boot_env() {
     # Compress the modules in a way the kernel understands
     find "${CD_ROOT}"/boot/kernel -type f -name '*.ko' -exec gzip -f {} \;
     find "${CD_ROOT}"/boot/kernel -type f -name '*.ko' -delete
-    cp "${release}"/etc/login.conf  "${CD_ROOT}"/etc/ # Workaround for: init: login_getclass: unknown class 'daemon'
+    cp "${RELEASE_DIR}"/etc/login.conf  "${CD_ROOT}"/etc/ # Workaround for: init: login_getclass: unknown class 'daemon'
     tar -cf - rescue | tar -xf - -C "${CD_ROOT}" # /rescue is full of hardlinks
     # Replace identical files with symlinks in rescue
     fdupes -r -S -N "${CD_ROOT}/rescue" || true # -N means do not prompt for confirmation
