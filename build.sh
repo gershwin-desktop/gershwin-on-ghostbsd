@@ -353,7 +353,34 @@ downsize_system() {
 prepare_boot_env() {
     log "Preparing boot environment..."
     cd "${RELEASE_DIR}" && tar -cf - boot | tar -xf - -C "${CD_ROOT}"
-    mkdir -p "${CD_ROOT}"/bin/ "${CD_ROOT}"/dev "${CD_ROOT}"/etc # TODO: Create all the others here as well instead of keeping them in overlays/boot
+    mkdir -p \
+    "${CD_ROOT}/Applications" \
+    "${CD_ROOT}/bin" \
+    "${CD_ROOT}/compat/linux/dev" \
+    "${CD_ROOT}/compat/linux/proc" \
+    "${CD_ROOT}/compat/linux/sys" \
+    "${CD_ROOT}/dev" \
+    "${CD_ROOT}/etc" \
+    "${CD_ROOT}/home" \
+    "${CD_ROOT}/lib" \
+    "${CD_ROOT}/libexec" \
+    "${CD_ROOT}/media" \
+    "${CD_ROOT}/mnt" \
+    "${CD_ROOT}/net" \
+    "${CD_ROOT}/Network" \
+    "${CD_ROOT}/nvidia" \
+    "${CD_ROOT}/opt" \
+    "${CD_ROOT}/proc" \
+    "${CD_ROOT}/rescue" \
+    "${CD_ROOT}/root" \
+    "${CD_ROOT}/sbin" \
+    "${CD_ROOT}/sys" \
+    "${CD_ROOT}/System" \
+    "${CD_ROOT}/tmp" \
+    "${CD_ROOT}/Users" \
+    "${CD_ROOT}/usr" \
+    "${CD_ROOT}/uzip" \
+    "${CD_ROOT}/var"
     cp "${RELEASE_DIR}"/COPYRIGHT "${CD_ROOT}"/
     chmod +x "${OVERLAYS_DIR}/boot/init_script"
     cp -R "${OVERLAYS_DIR}/boot" "${CD_ROOT}"
