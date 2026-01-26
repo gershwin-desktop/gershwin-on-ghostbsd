@@ -356,7 +356,7 @@ prepare_boot_env() {
     mkdir -p "${CD_ROOT}"/bin/ "${CD_ROOT}"/dev "${CD_ROOT}"/etc # TODO: Create all the others here as well instead of keeping them in overlays/boot
     cp "${RELEASE_DIR}"/COPYRIGHT "${CD_ROOT}"/
     chmod +x "${OVERLAYS_DIR}/boot/init_script"
-    cp -R "${OVERLAYS_DIR}/boot/" "${CD_ROOT}"
+    cp -R "${OVERLAYS_DIR}/boot" "${CD_ROOT}"
     cat "${CD_ROOT}"/boot/loader.conf
     # Remove all modules from the ISO that are not required before the root filesystem is mounted
     # The whole directory /boot/modules is unnecessary
