@@ -364,6 +364,7 @@ prepare_boot_env() {
     "${CD_ROOT}/home" \
     "${CD_ROOT}/lib" \
     "${CD_ROOT}/libexec" \
+    "${CD_ROOT}/Local" \
     "${CD_ROOT}/media" \
     "${CD_ROOT}/mnt" \
     "${CD_ROOT}/net" \
