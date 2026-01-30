@@ -428,6 +428,8 @@ generate_iso() {
 
     log "Generating final ISO image..."
     ISO_PATH="${ISO_DIR}/${IMAGE_NAME_PREFIX}-$(date +%Y%m%d%H%M%S)-${ARCH_STR}.iso"
+    # Provide a way to know from the booted ISO what ISO it is
+    echo "${IMAGE_NAME_PREFIX}-$(date +%Y%m%d%H%M%S)-${ARCH_STR}.iso" >> "${CD_ROOT}/.iso"
 
     # Canonical path: run the upstream mkisoimages.sh from its directory so it can
     # reliably source install-boot.sh and produce a hybrid EFI/BIOS image.
