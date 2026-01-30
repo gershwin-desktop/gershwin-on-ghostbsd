@@ -90,10 +90,11 @@ mount -t nullfs /media/.uzip/sbin /sbin
 mount -t nullfs /media/.uzip/usr /usr
 # mount -t nullfs /media/.uzip/etc /etc
 mount -t nullfs /media/.uzip/boot /boot
+mount -t nullfs /media/.uzip/root /root
 
 kldload /media/.uzip/boot/kernel/unionfs.ko
 
-mount -t tmpfs tmpfs /root
+# mount -t tmpfs tmpfs /root
 
 mount -t tmpfs tmpfs /compat
 chmod 1777 /compat # TODO: Check if really needed by FreeBSD 13
@@ -107,6 +108,12 @@ mkdir -p /var/run # Needed?
 # Avoid using '-o below' because it is known to be crashy
 mkdir -p /tmp/usr/local
 mount -t unionfs /tmp/usr/local /usr/local
+
+# Not strictly needed, but may come in handy to test modifications in /System and /root
+mkdir -p /tmp/System
+mount -t unionfs /tmp/System /System
+mkdir -p /tmp/root
+mount -t unionfs /tmp/root /root
 
 # /etc, needed for networking
 cp -R /media/.uzip/etc /tmp
