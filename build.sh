@@ -311,7 +311,7 @@ build_gershwin_components() {
     done
 
     # Run checkout for anything missing
-    ( cd "${WORKDIR}/gershwin-build" && ./checkout.sh )
+    ( cd "${WORKDIR}/gershwin-build" && PINNED=1 ./checkout.sh  )
     
     cp -R "${WORKDIR}/gershwin-build" "${RELEASE_DIR}/root/gershwin-build"
     cp /etc/resolv.conf "${RELEASE_DIR}/etc/resolv.conf"
