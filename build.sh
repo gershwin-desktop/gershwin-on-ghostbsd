@@ -408,6 +408,10 @@ prepare_boot_env() {
     # Replace identical files with symlinks in rescue
     fdupes -r -S -N "${CD_ROOT}/rescue" || true # -N means do not prompt for confirmation
     ls -lh "${CD_ROOT}/rescue"
+
+    # Comment out splash so that we get the non-color picture built into the kernel instead of a color picture
+    # that doesn't match our color scheme
+    sed -i '' -e 's|^splash|# splash|g' "${CD_ROOT}"/boot/loader.conf
     
     # Must not try to load tmpfs module in FreeBSD 13 and later, 
     # because it will prevent the one in the kernel from working
