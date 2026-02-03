@@ -80,8 +80,7 @@ mount -t ufs -o ro /dev/md0.uzip /media/.uzip
 
 kldload /media/.uzip/boot/kernel/nullfs.ko
 mount -t nullfs /media/.uzip/System /System
-mount -t tmpfs tmpfs /Local
-mount -t nullfs /media/.uzip/Applications /Applications
+mount -t nullfs /media/.uzip/Local /Local
 mount -t nullfs /media/.uzip/bin /bin
 mount -t nullfs /media/.uzip/lib /lib
 mount -t nullfs /media/.uzip/libexec /libexec
@@ -115,22 +114,14 @@ mount -t unionfs /tmp/System /System
 mkdir -p /tmp/root
 mount -t unionfs /tmp/root /root
 
+# /Local needs to be writable for user data
+mkdir -p /tmp/Local
+mount -t unionfs /tmp/Local /Local
+
 # /etc, needed for networking
 cp -R /media/.uzip/etc /tmp
 mount -t tmpfs tmpfs /etc
 mount -t nullfs /tmp/etc /etc
-
-# Add liveuser, this also creates a writable $HOME from skel
-mount -t tmpfs tmpfs /home
-mkdir -p /home/liveuser/Desktop
-pw useradd liveuser -u 1000 \
--c "Live User" -d "/home/liveuser" \
--g wheel -G operator -m -s /bin/sh -k /usr/share/skel -w none
-chown -R liveuser /home/liveuser
-pw groupmod wheel -m liveuser
-pw groupmod video -m liveuser
-pw groupmod webcamd -m liveuser
-pw groupmod cups -m liveuser
 
 ######################################################################
 # From here on optional, helloSystem specific optimizations
@@ -153,16 +144,6 @@ else
   # sysctl kern.coredump=1
   # sysctl kern.corefile="/tmp/%N.core"
 fi
-
-# Allow /Applications to be modified
-mkdir -p /tmp/unionfs/Applications
-mount -t unionfs /tmp/unionfs/Applications /Applications
-chmod -R +w /Applications
-
-# Do not launch Welcome in Live mode
-mkdir -p /home/liveuser/.config/hello/
-touch /home/liveuser/.config/hello/.helloSetupDone
-chown -R liveuser /home/liveuser/.config
 
 # TODO: Check whether boot_mute is set and if it is not, then do this?
 # Log the WHOLE verbose output of the helloDesktop session to a logfile

@@ -245,35 +245,13 @@ dsbdriverd_enable="YES"
 initgfx_enable="YES"
 initgfx_menu="NO"
 smartd_enable="YES"
+dshelper_enable="YES"
 EFS
 
-    # Live User Setup
-    chroot "${RELEASE_DIR}" pw useradd "${LIVE_USER}" -u 1100 \
-        -c "Gershwin Live User" -d "/Users/${LIVE_USER}" \
-        -g wheel -G operator -m -s /usr/local/bin/zsh -k /usr/share/skel -w none
-
-    # Autologin
-    {
-        echo "# ${LIVE_USER} user autologin"
-        echo "${LIVE_USER}:\\"
-        echo ":al=${LIVE_USER}:ht:np:sp#115200:"
-    } >> "${RELEASE_DIR}/etc/gettytab"
-    sed -i "" "/ttyv0/s/Pc/${LIVE_USER}/g" "${RELEASE_DIR}/etc/ttys"
-
-    # Gershwin User Config
-    cat > "${RELEASE_DIR}/Users/${LIVE_USER}/.zshrc" <<'EOR'
-if [ ! -f /tmp/.xstarted ]; then
-  touch /tmp/.xstarted
-  [ -f /usr/local/bin/xconfig ] && sudo xconfig auto
-  sleep 1
-  echo "X configuration completed"
-  [ -d /xdrivers ] && sudo rm -rf /xdrivers
-  sleep 1
-  startx
-fi
-EOR
-    chmod 765 "${RELEASE_DIR}/Users/${LIVE_USER}/.zshrc"
-    chroot "${RELEASE_DIR}" chown -R "${LIVE_USER}:wheel" "/Users/${LIVE_USER}"
+    # Initialize Directory Services and create live user
+    log "Initializing Directory Services..."
+    chroot "${RELEASE_DIR}" dscli init
+    chroot "${RELEASE_DIR}" dscli user add user --realname "User" --admin
 
     # Sudoers
     sed -i "" -e 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' "${RELEASE_DIR}/usr/local/etc/sudoers"
@@ -354,7 +332,6 @@ prepare_boot_env() {
     log "Preparing boot environment..."
     cd "${RELEASE_DIR}" && tar -cf - boot | tar -xf - -C "${CD_ROOT}"
     mkdir -p \
-    "${CD_ROOT}/Applications" \
     "${CD_ROOT}/bin" \
     "${CD_ROOT}/compat/linux/dev" \
     "${CD_ROOT}/compat/linux/proc" \
@@ -378,7 +355,6 @@ prepare_boot_env() {
     "${CD_ROOT}/sys" \
     "${CD_ROOT}/System" \
     "${CD_ROOT}/tmp" \
-    "${CD_ROOT}/Users" \
     "${CD_ROOT}/usr" \
     "${CD_ROOT}/uzip" \
     "${CD_ROOT}/var"
