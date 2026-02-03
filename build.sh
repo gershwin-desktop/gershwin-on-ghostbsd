@@ -449,8 +449,8 @@ log_env
 setup_workspace
 install_base_system
 install_gershwin_software
-configure_system
 build_gershwin_components
+configure_system
 downsize_system
 prepare_boot_env
 generate_iso
