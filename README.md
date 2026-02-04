@@ -33,4 +33,4 @@ The resulting ISO and its SHA256 checksum will be located in `/usr/local/gershwi
 
 ## Live Environment
 
-The live system uses a memory-efficient `uzip` and `nullfs` layering architecture. The default user is `user` with UID `5001`.
+The live system uses a memory-efficient `uzip` and `nullfs` layering architecture. The default user is `user` with password `gershwin`.

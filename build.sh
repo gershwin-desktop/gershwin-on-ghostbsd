@@ -263,6 +263,7 @@ EFS
     log "Initializing Directory Services..."
     chroot "${RELEASE_DIR}" sh -c ". /System/Library/Makefiles/GNUstep.sh && dscli init"
     chroot "${RELEASE_DIR}" sh -c ". /System/Library/Makefiles/GNUstep.sh && dscli user add user --realname \"User\" --admin"
+    chroot "${RELEASE_DIR}" sh -c ". /System/Library/Makefiles/GNUstep.sh && echo 'gershwin' | dscli passwd user --no-prompt"
 
     # Sudoers
     sed -i "" -e 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' "${RELEASE_DIR}/usr/local/etc/sudoers"
