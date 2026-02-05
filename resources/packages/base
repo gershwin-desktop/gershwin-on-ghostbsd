@@ -113,6 +113,7 @@ GhostBSD-natd-lib32
 GhostBSD-netmap
 GhostBSD-netmap-lib32
 GhostBSD-newsyslog
+GhostBSD-nfs
 GhostBSD-nuageinit
 GhostBSD-nvme-tools
 GhostBSD-openssl
